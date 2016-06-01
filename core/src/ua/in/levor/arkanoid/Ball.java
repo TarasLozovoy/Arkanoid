@@ -3,27 +3,26 @@ package ua.in.levor.arkanoid;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+
+import ua.in.levor.arkanoid.PowerUps.PowerUp;
 
 public class Ball extends Sprite {
     public static final int DIAMETER = 18;
     public static final int RADIUS = DIAMETER / 2;
     public static final float DEFAULT_VELOCITY_X = 2f;
     public static final float DEFAULT_VELOCITY_y = 2f;
-    public static final String BALL_IDENTIFIER = "ball";
 
     public World world;
     public Body b2body;
 
+    private PowerUp.Type powerUpType = null;
     private boolean isActive = false;
 
     public Ball(World world) {
@@ -52,7 +51,7 @@ public class Ball extends Sprite {
 
         fdef.shape = shape;
         Fixture fixture = b2body.createFixture(fdef);
-        fixture.setUserData("ball");
+        fixture.setUserData(this);
     }
 
     public void update(float dt) {
@@ -77,7 +76,6 @@ public class Ball extends Sprite {
 
 
         setPosition(x, y);
-
     }
 
     public void dispose() {
@@ -93,5 +91,13 @@ public class Ball extends Sprite {
 
     public boolean isBelowYZero() {
         return b2body.getPosition().y - getHeight() / 2 < 0;
+    }
+
+    public void setPowerUp(PowerUp.Type type) {
+        this.powerUpType = type;
+    }
+
+    public PowerUp.Type getPowerUpType() {
+        return powerUpType;
     }
 }

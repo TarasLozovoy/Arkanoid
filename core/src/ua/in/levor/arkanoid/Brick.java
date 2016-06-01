@@ -13,6 +13,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import ua.in.levor.arkanoid.PowerUps.PowerUp;
+import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
+
 public class Brick {
     public static final int TILE_SIZE = 24;
     private TiledMapTileSet tileSet;
@@ -25,6 +28,7 @@ public class Brick {
     protected Fixture fixture;
 
     private Type type;
+    private boolean destroyed;
 
     public Brick(World world, TiledMap map, Rectangle bounds, Type type) {
         this.world = world;
@@ -63,12 +67,18 @@ public class Brick {
         return layer.getCell((int) Arkanoid.unscale(body.getPosition().x) / TILE_SIZE, (int) Arkanoid.unscale(body.getPosition().y) / TILE_SIZE);
     }
 
+    public World getWorld() {
+        return world;
+    }
+
     public void handleHit() {
         switch (type) {
             case POWER:
                 // TODO: 6/1/16 add powerUp spawn
                 getCell().setTile(null);
                 setCategoryFilter(Arkanoid.DESTROYED_BIT);
+                PowerUpHelper.getInstance().requestNewPowerUp(body.getPosition());
+                destroyed = true;
                 break;
             case RED:
                 getCell().setTile(tileSet.getTile(Type.GRAY.getIdInMap()));
@@ -89,10 +99,15 @@ public class Brick {
             case YELLOW1:
                 getCell().setTile(null);
                 setCategoryFilter(Arkanoid.DESTROYED_BIT);
+                destroyed = true;
                 break;
             default:
                 throw new RuntimeException("Unexpected block type!");
         }
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
     public enum Type {

@@ -10,18 +10,16 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import ua.in.levor.arkanoid.PowerUps.PowerUp;
+import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
 import ua.in.levor.arkanoid.Tools.B2WorldCreator;
 import ua.in.levor.arkanoid.Tools.WorldContactListener;
 
@@ -33,10 +31,16 @@ public class GameScreen implements Screen {
     private Vector3 touchPosition;
     private Ball ball;
     private Platform platform;
+    private Array<PowerUp> powerUps = new Array<PowerUp>();
 
     private Sprite bg;
 
     private TextureAtlas atlas;
+
+    //powerUps
+    private PowerUpHelper powerUpHelper;
+    private float bombTimer;
+
 
     //box2d
     private World world;
@@ -46,12 +50,12 @@ public class GameScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
-    private Array<PowerUp> powerUps = new Array<PowerUp>();
-
     public GameScreen(Arkanoid game) {
         this.game = game;
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
+
+        powerUpHelper = PowerUpHelper.getInstance();
 
         touchPosition = new Vector3();
         bg = new Sprite(new Texture(Gdx.files.internal("level1.png")));
@@ -94,6 +98,8 @@ public class GameScreen implements Screen {
         }
 
         renderer.setView(camera);
+
+        updatePowerUps(dt);
     }
 
     @Override
@@ -107,31 +113,15 @@ public class GameScreen implements Screen {
         bg.draw(game.batch);
         ball.draw(game.batch);
         platform.draw(game.batch);
+
+        for (PowerUp powerUp : powerUps) {
+            powerUp.draw(game.batch);
+        }
+
         game.batch.end();
 
         renderer.render();
-        b2dr.render(world, camera.combined);
-
-        updatePowerUps(delta);
-    }
-
-    private void updatePowerUps(float dt) {
-        Array<PowerUp> destroyable = new Array<PowerUp>();
-        for (PowerUp powerUp : powerUps) {
-            powerUp.update(dt);
-//            if (Intersector.intersectSegments(powerUp.getLeftLine1(), powerUp.getLeftLine2(), platform.getLeftPoint(), platform.getRightPoint(), null)
-//                    || Intersector.intersectSegments(powerUp.getRightLine1(), powerUp.getRightLine2(), platform.getLeftPoint(), platform.getRightPoint(), null)) {
-                // TODO: 5/27/16 add power up action
-                destroyable.add(powerUp);
-//            }
-            if (powerUp.getPosition().y + powerUp.getHeight() < 0) {
-                destroyable.add(powerUp);
-            }
-        }
-        for (PowerUp powerUp :destroyable) {
-            powerUps.removeValue(powerUp, true);
-            powerUp.dispose();
-        }
+//        b2dr.render(world, camera.combined);
     }
 
     private void handleInput(float dt) {
@@ -161,6 +151,40 @@ public class GameScreen implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    private void updatePowerUps(float dt) {
+        if (powerUpHelper.getRequestedPowerUpsPositions().size > 0) {
+            for (Vector2 pos : powerUpHelper.getRequestedPowerUpsPositions()) {
+                PowerUp powerUp = new PowerUp(world, pos);
+                powerUps.add(powerUp);
+            }
+            powerUpHelper.clearRequestedPowerUpsPositions();
+        }
+
+        Array<PowerUp> toBeDestroyed = new Array<PowerUp>();
+        for (PowerUp powerUp : powerUps) {
+            powerUp.update(dt);
+            if (powerUp.isReady()) {
+                world.destroyBody(powerUp.b2body);
+                powerUp.dispose();
+                toBeDestroyed.add(powerUp);
+                // TODO: 6/1/16 add powerUp action
+                bombTimer = 20;
+            }
+        }
+
+        for (PowerUp powerUp : toBeDestroyed) {
+            powerUps.removeValue(powerUp, true);
+        }
+
+        if (bombTimer > 0) {
+            System.out.println(dt);
+            bombTimer -= dt;
+            ball.setPowerUp(PowerUp.Type.BOMB);
+        } else {
+            ball.setPowerUp(null);
+        }
     }
 
     @Override

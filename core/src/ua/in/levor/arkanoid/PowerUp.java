@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 public class PowerUp {
+    public static final int GRAVITY = 150;
+
     private Type type;
     private Vector2 position;
     private Texture texture;
@@ -33,7 +35,7 @@ public class PowerUp {
     }
 
     public void update(float dt) {
-        position.y -= Arkanoid.GRAVITY * dt;
+        position.y -= GRAVITY * dt;
     }
 
     public Type getType() {

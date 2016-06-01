@@ -1,107 +1,113 @@
 package ua.in.levor.arkanoid;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class Brick {
-    public static final int WIDTH = 24;
-    public static final int HEIGHT = 24;
-    public static final int HIT_RESIST_TIME = 200000000;
+    public static final int TILE_SIZE = 24;
+    private TiledMapTileSet tileSet;
 
-    private Texture texture;
-    private int durability;
-    private Vector2 position;
-    private Vector2 center;
-    private Rectangle rect;
+    protected World world;
+    protected TiledMap map;
+    protected TiledMapTile tile;
+    protected Rectangle bounds;
+    protected Body body;
+    protected Fixture fixture;
 
-    private long hitTime = 0;
+    private Type type;
 
-    public Brick(int durability, Vector2 position) {
-        this.durability = durability;
-        this.position = position;
+    public Brick(World world, TiledMap map, Rectangle bounds, Type type) {
+        this.world = world;
+        this.map = map;
+        this.bounds = bounds;
+        this.type = type;
 
-        rect = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
+        tileSet = map.getTileSets().getTileSet("bricks");
 
-        updateDurability(durability);
-        center = new Vector2();
+        BodyDef bDef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+
+        bDef.type = BodyDef.BodyType.StaticBody;
+        bDef.position.set(Arkanoid.scale(bounds.x + bounds.width / 2), Arkanoid.scale(bounds.y + bounds.height / 2));
+
+        body = world.createBody(bDef);
+
+        shape.setAsBox(Arkanoid.scale(bounds.getWidth() / 2), Arkanoid.scale(bounds.getHeight() / 2));
+        fdef.shape = shape;
+        fixture = body.createFixture(fdef);
+        fixture.setUserData(this);
+
+        setCategoryFilter(Arkanoid.BRICK_BIT);
     }
 
-    private void updateDurability(int durability) {
-        switch (durability) {
-            case 1 :
-                texture = new Texture("BR_3.png");
+    public void setCategoryFilter(short filterBit) {
+        Filter filter = new Filter();
+        filter.categoryBits = filterBit;
+        fixture.setFilterData(filter);
+        body.setAwake(true);
+    }
+
+    public TiledMapTileLayer.Cell getCell() {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
+        return layer.getCell((int) Arkanoid.unscale(body.getPosition().x) / TILE_SIZE, (int) Arkanoid.unscale(body.getPosition().y) / TILE_SIZE);
+    }
+
+    public void handleHit() {
+        switch (type) {
+            case POWER:
+                // TODO: 6/1/16 add powerUp spawn
+                getCell().setTile(null);
+                setCategoryFilter(Arkanoid.DESTROYED_BIT);
                 break;
-            case 2 :
-                texture = new Texture("BR_4.png");
+            case RED:
+                getCell().setTile(tileSet.getTile(Type.GRAY.getIdInMap()));
+                type = Type.GRAY;
                 break;
-            case 3 :
-                texture = new Texture("BR_5.png");
+            case GRAY:
+                getCell().setTile(tileSet.getTile(Type.YELLOW3.getIdInMap()));
+                type = Type.YELLOW3;
                 break;
-            case 4 :
-                texture = new Texture("BR_2.png");
+            case YELLOW3:
+                getCell().setTile(tileSet.getTile(Type.YELLOW2.getIdInMap()));
+                type = Type.YELLOW2;
                 break;
-            case 5 :
-                texture = new Texture("BR_1.png");
+            case YELLOW2:
+                getCell().setTile(tileSet.getTile(Type.YELLOW1.getIdInMap()));
+                type = Type.YELLOW1;
                 break;
-            case 9 :
-                texture = new Texture("BR_power.png");
+            case YELLOW1:
+                getCell().setTile(null);
+                setCategoryFilter(Arkanoid.DESTROYED_BIT);
                 break;
+            default:
+                throw new RuntimeException("Unexpected block type!");
         }
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
+    public enum Type {
+        POWER(6),
+        RED(5), GRAY(4), YELLOW3(3), YELLOW2(2), YELLOW1(1);
 
-    public int getDurability() {
-        return durability;
-    }
+        int idInMap;
 
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public Rectangle getRect() {
-        return rect;
-    }
-
-    public void dispose() {
-        texture.dispose();
-    }
-
-    @Override
-    public String toString() {
-        return "position: " + position.x + " - " + position.y + " , durability: " + durability;
-    }
-
-    /**
-     * @return true if diamond is destroyed, false otherwise
-     */
-    public State handleHit() {
-        if (TimeUtils.nanoTime() - hitTime < HIT_RESIST_TIME) return State.ALIVE;
-        hitTime = TimeUtils.nanoTime();
-
-        if (durability == 1) {
-            return State.DESTROYED;
+        Type(int idInMap) {
+            this.idInMap = idInMap;
         }
 
-        if (durability == 9) {
-            return State.SPAWN_BOMB;
+        public int getIdInMap() {
+            return idInMap;
+
         }
-        durability--;
-        updateDurability(durability);
-        return State.ALIVE;
     }
-
-    public boolean isHitResistEnabled() {
-        return TimeUtils.nanoTime() - hitTime < HIT_RESIST_TIME;
-    }
-
-    public Vector2 getCenter() {
-        return center.set(position.x + WIDTH / 2, position.y + HEIGHT / 2);
-    }
-
-    enum State {ALIVE, DESTROYED, SPAWN_BOMB}
 }

@@ -102,13 +102,13 @@ public class Brick {
         }
     }
 
-    private void destroy() {
+    public void destroy() {
         getCell().setTile(null);
         setCategoryFilter(Arkanoid.DESTROYED_BIT);
         destroy = true;
     }
 
-    public boolean readyToDestroy() {
+    public boolean isReadyToDestroy() {
         return destroy;
     }
 

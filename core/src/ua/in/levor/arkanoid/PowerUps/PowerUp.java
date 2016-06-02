@@ -19,7 +19,7 @@ import ua.in.levor.arkanoid.Arkanoid;
 public class PowerUp extends Sprite {
     public static final int GRAVITY = 150;
     public static final int WIDTH = 24;
-    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 1;
+    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 3;
     public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
@@ -40,6 +40,14 @@ public class PowerUp extends Sprite {
             case 0:
                 type = Type.BOMB;
                 set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/1bomb_powerup.png")))));
+                break;
+            case 1:
+                type = Type.STEEL_BALL;
+                set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/2steel_ball_powerup.png")))));
+                break;
+            case 2:
+                type = Type.FIRE_BALL;
+                set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/3fire_ball_powerup.png")))));
                 break;
         }
 
@@ -72,6 +80,10 @@ public class PowerUp extends Sprite {
         return isReady;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public void update(float dt) {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
     }
@@ -81,6 +93,6 @@ public class PowerUp extends Sprite {
     }
 
     public enum Type {
-        BOMB;
+        BOMB, STEEL_BALL, FIRE_BALL
     }
 }

@@ -33,6 +33,12 @@ public class WorldContactListener implements ContactListener {
                     for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(PowerUp.BOMB_BURST_RADIUS, intersection)) {
                         b.handleHit();
                     }
+                } else if (ballObj.getPowerUpType() == PowerUp.Type.STEEL_BALL) {
+                    brick.handleHit();
+                    brick.handleHit();
+                } else if (ballObj.getPowerUpType() == PowerUp.Type.FIRE_BALL) {
+                    brick.handleHit();
+                    brick.destroy();
                 } else {
                     brick.handleHit();
                 }

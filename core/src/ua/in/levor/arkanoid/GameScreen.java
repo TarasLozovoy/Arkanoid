@@ -41,7 +41,8 @@ public class GameScreen implements Screen {
 
     //powerUps
     private PowerUpHelper powerUpHelper;
-    private float bombTimer;
+    private float powerUpTimer;
+    private PowerUp.Type powerUpType;
 
 
     //box2d
@@ -159,7 +160,7 @@ public class GameScreen implements Screen {
     private void updateBricks(float dt) {
         Array<Brick> destroyArray = new Array<Brick>();
         for (Brick br: BrickHelper.getInstance().getAllBricks()) {
-            if (br.readyToDestroy()) {
+            if (br.isReadyToDestroy()) {
                 destroyArray.add(br);
             }
         }
@@ -185,7 +186,8 @@ public class GameScreen implements Screen {
             if (powerUp.isReady()) {
                 toBeDestroyed.add(powerUp);
                 // TODO: 6/1/16 add powerUp action
-                bombTimer = 20;
+                powerUpTimer = 20;
+                powerUpType = powerUp.getType();
             } else if (powerUp.b2body.getPosition().y < 0) {
                 toBeDestroyed.add(powerUp);
             }
@@ -197,10 +199,10 @@ public class GameScreen implements Screen {
             powerUp.dispose();
         }
 
-        if (bombTimer > 0) {
-            System.out.println(dt);
-            bombTimer -= dt;
-            ball.setPowerUp(PowerUp.Type.BOMB);
+        if (powerUpTimer > 0) {
+            System.out.println(powerUpTimer);
+            powerUpTimer -= dt;
+            ball.setPowerUp(powerUpType);
         } else {
             ball.setPowerUp(null);
         }

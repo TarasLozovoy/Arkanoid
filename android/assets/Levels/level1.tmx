@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="33" tilewidth="24" tileheight="24" nextobjectid="91">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="33" tilewidth="24" tileheight="24" nextobjectid="95">
  <tileset firstgid="1" name="bricks" tilewidth="24" tileheight="24" tilecount="6" columns="6">
   <image source="../Bricks/bricks.png" width="144" height="24"/>
  </tileset>
  <layer name="Graphics" width="20" height="33">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2BkADYixQgBViBmAWJmHJgFqoZYN8HMw4dZcbgVm/2sRGJseskJD3x+GwWjYBSMglEwMgAAFc8Aww==
+   eJxjYBgFo2BkADYixQgBViBmAWJmHJgFqoZYN8HMw4dZcbgVm/2sRGJseokJIzYcYoT0jYJRMApGwSgYvgAAqD8A2w==
   </data>
  </layer>
  <objectgroup name="red">
@@ -62,5 +62,9 @@
   <object id="85" x="288" y="216" width="24" height="24"/>
   <object id="86" x="360" y="264" width="24" height="24"/>
   <object id="87" x="456" y="312" width="24" height="24"/>
+  <object id="91" x="120" y="312" width="24" height="24"/>
+  <object id="92" x="216" y="312" width="24" height="24"/>
+  <object id="93" x="240" y="312" width="24" height="24"/>
+  <object id="94" x="336" y="312" width="24" height="24"/>
  </objectgroup>
 </map>

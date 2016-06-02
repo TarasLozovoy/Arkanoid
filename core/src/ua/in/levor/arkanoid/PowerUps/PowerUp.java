@@ -20,6 +20,7 @@ public class PowerUp extends Sprite {
     public static final int GRAVITY = 150;
     public static final int WIDTH = 24;
     public static final int NUMBER_OF_POWERUPS_AVAILABLE = 1;
+    public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
     public Body b2body;
@@ -79,5 +80,7 @@ public class PowerUp extends Sprite {
         getTexture().dispose();
     }
 
-    public enum Type {BOMB}
+    public enum Type {
+        BOMB;
+    }
 }

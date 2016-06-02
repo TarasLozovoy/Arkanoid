@@ -17,7 +17,7 @@ public class Ball extends Sprite {
     public static final int DIAMETER = 18;
     public static final int RADIUS = DIAMETER / 2;
     public static final float DEFAULT_VELOCITY_X = 2f;
-    public static final float DEFAULT_VELOCITY_y = 2f;
+    public static final float DEFAULT_VELOCITY_y = 1.9f;
 
     public World world;
     public Body b2body;
@@ -27,11 +27,12 @@ public class Ball extends Sprite {
 
     public Ball(World world) {
         super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("ball22.png")))));
-        setScale(24/DIAMETER);
+        setScale(24 / DIAMETER);
         this.world = world;
         defineBall();
 
         setBounds(0, 0, Arkanoid.scale(DIAMETER), Arkanoid.scale(DIAMETER));
+        setOrigin(Arkanoid.scale(RADIUS), Arkanoid.scale(RADIUS));
     }
 
     private void defineBall() {
@@ -76,6 +77,9 @@ public class Ball extends Sprite {
 
 
         setPosition(x, y);
+        if (isActive) {
+            rotate(0.5f);
+        }
     }
 
     public void dispose() {

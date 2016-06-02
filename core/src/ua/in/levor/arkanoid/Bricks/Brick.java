@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid;
+package ua.in.levor.arkanoid.Bricks;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import ua.in.levor.arkanoid.PowerUps.PowerUp;
+import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
 
 public class Brick {
@@ -28,7 +28,7 @@ public class Brick {
     protected Fixture fixture;
 
     private Type type;
-    private boolean destroyed;
+    private boolean destroy = false;
 
     public Brick(World world, TiledMap map, Rectangle bounds, Type type) {
         this.world = world;
@@ -75,10 +75,8 @@ public class Brick {
         switch (type) {
             case POWER:
                 // TODO: 6/1/16 add powerUp spawn
-                getCell().setTile(null);
-                setCategoryFilter(Arkanoid.DESTROYED_BIT);
+                destroy();
                 PowerUpHelper.getInstance().requestNewPowerUp(body.getPosition());
-                destroyed = true;
                 break;
             case RED:
                 getCell().setTile(tileSet.getTile(Type.GRAY.getIdInMap()));
@@ -97,17 +95,25 @@ public class Brick {
                 type = Type.YELLOW1;
                 break;
             case YELLOW1:
-                getCell().setTile(null);
-                setCategoryFilter(Arkanoid.DESTROYED_BIT);
-                destroyed = true;
+                destroy();
                 break;
             default:
                 throw new RuntimeException("Unexpected block type!");
         }
     }
 
-    public boolean isDestroyed() {
-        return destroyed;
+    private void destroy() {
+        getCell().setTile(null);
+        setCategoryFilter(Arkanoid.DESTROYED_BIT);
+        destroy = true;
+    }
+
+    public boolean readyToDestroy() {
+        return destroy;
+    }
+
+    public Body getBody() {
+        return body;
     }
 
     public enum Type {
@@ -122,7 +128,6 @@ public class Brick {
 
         public int getIdInMap() {
             return idInMap;
-
         }
     }
 }

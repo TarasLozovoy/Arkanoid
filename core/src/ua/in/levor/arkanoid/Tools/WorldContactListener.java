@@ -1,13 +1,16 @@
 package ua.in.levor.arkanoid.Tools;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.WorldManifold;
 
 import ua.in.levor.arkanoid.Ball;
-import ua.in.levor.arkanoid.Brick;
+import ua.in.levor.arkanoid.Bricks.Brick;
+import ua.in.levor.arkanoid.Bricks.BrickHelper;
 import ua.in.levor.arkanoid.Platform;
 import ua.in.levor.arkanoid.PowerUps.PowerUp;
 
@@ -22,12 +25,16 @@ public class WorldContactListener implements ContactListener {
             Fixture object = ball == fixA ? fixB : fixA;
             if (object.getUserData() != null && Brick.class.isAssignableFrom(object.getUserData().getClass())) {
                 Brick brick = ((Brick)object.getUserData());
-                brick.handleHit();
                 Ball ballObj = ((Ball)ball.getUserData());
+
                 if (ballObj.getPowerUpType() == PowerUp.Type.BOMB) {
-                    if (!brick.isDestroyed()) {
-                        brick.handleHit();
+                    WorldManifold manifold = contact.getWorldManifold();
+                    Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
+                    for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(PowerUp.BOMB_BURST_RADIUS, intersection)) {
+                        b.handleHit();
                     }
+                } else {
+                    brick.handleHit();
                 }
             }
         }

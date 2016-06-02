@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import ua.in.levor.arkanoid.Bricks.Brick;
+import ua.in.levor.arkanoid.Bricks.BrickHelper;
 import ua.in.levor.arkanoid.PowerUps.PowerUp;
 import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
 import ua.in.levor.arkanoid.Tools.B2WorldCreator;
@@ -100,6 +102,7 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
 
         updatePowerUps(dt);
+        updateBricks(dt);
     }
 
     @Override
@@ -121,7 +124,7 @@ public class GameScreen implements Screen {
         game.batch.end();
 
         renderer.render();
-//        b2dr.render(world, camera.combined);
+        b2dr.render(world, camera.combined);
     }
 
     private void handleInput(float dt) {
@@ -153,6 +156,20 @@ public class GameScreen implements Screen {
 
     }
 
+    private void updateBricks(float dt) {
+        Array<Brick> destroyArray = new Array<Brick>();
+        for (Brick br: BrickHelper.getInstance().getAllBricks()) {
+            if (br.readyToDestroy()) {
+                destroyArray.add(br);
+            }
+        }
+
+        for (Brick br : destroyArray) {
+            world.destroyBody(br.getBody());
+            BrickHelper.getInstance().getAllBricks().removeValue(br, true);
+        }
+    }
+
     private void updatePowerUps(float dt) {
         if (powerUpHelper.getRequestedPowerUpsPositions().size > 0) {
             for (Vector2 pos : powerUpHelper.getRequestedPowerUpsPositions()) {
@@ -166,16 +183,18 @@ public class GameScreen implements Screen {
         for (PowerUp powerUp : powerUps) {
             powerUp.update(dt);
             if (powerUp.isReady()) {
-                world.destroyBody(powerUp.b2body);
-                powerUp.dispose();
                 toBeDestroyed.add(powerUp);
                 // TODO: 6/1/16 add powerUp action
                 bombTimer = 20;
+            } else if (powerUp.b2body.getPosition().y < 0) {
+                toBeDestroyed.add(powerUp);
             }
         }
 
         for (PowerUp powerUp : toBeDestroyed) {
             powerUps.removeValue(powerUp, true);
+            world.destroyBody(powerUp.b2body);
+            powerUp.dispose();
         }
 
         if (bombTimer > 0) {

@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid.PowerUps;
+package ua.in.levor.arkanoid.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

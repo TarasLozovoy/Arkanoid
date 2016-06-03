@@ -6,8 +6,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
-import ua.in.levor.arkanoid.Bricks.Brick;
-import ua.in.levor.arkanoid.Bricks.BrickHelper;
+import ua.in.levor.arkanoid.Sprites.Brick;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
 
 public class B2WorldCreator{
     public static final int RED_BRICKS_LAYER = 1;

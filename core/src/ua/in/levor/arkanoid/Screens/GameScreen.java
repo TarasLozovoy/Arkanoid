@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid;
+package ua.in.levor.arkanoid.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -18,10 +18,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import ua.in.levor.arkanoid.Bricks.Brick;
-import ua.in.levor.arkanoid.Bricks.BrickHelper;
-import ua.in.levor.arkanoid.PowerUps.PowerUp;
-import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
+import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Sprites.Ball;
+import ua.in.levor.arkanoid.Sprites.Brick;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
+import ua.in.levor.arkanoid.Sprites.Platform;
+import ua.in.levor.arkanoid.Sprites.PowerUp;
+import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
+import ua.in.levor.arkanoid.StatusBar;
 import ua.in.levor.arkanoid.Tools.B2WorldCreator;
 import ua.in.levor.arkanoid.Tools.WorldContactListener;
 
@@ -53,10 +57,14 @@ public class GameScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
+    private StatusBar statusBar;
+
     public GameScreen(Arkanoid game) {
         this.game = game;
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
+
+        statusBar = new StatusBar(game.batch);
 
         powerUpHelper = PowerUpHelper.getInstance();
 
@@ -99,6 +107,7 @@ public class GameScreen implements Screen {
         if (ball.isBelowYZero()) {
             game.setScreen(new GameScreen(game));
         }
+        statusBar.update();
 
         renderer.setView(camera);
 
@@ -126,6 +135,9 @@ public class GameScreen implements Screen {
 
         renderer.render();
         b2dr.render(world, camera.combined);
+
+        game.batch.setProjectionMatrix(statusBar.stage.getCamera().combined);
+        statusBar.stage.draw();
     }
 
     private void handleInput(float dt) {
@@ -166,7 +178,6 @@ public class GameScreen implements Screen {
         }
 
         for (Brick br : destroyArray) {
-            world.destroyBody(br.getBody());
             BrickHelper.getInstance().getAllBricks().removeValue(br, true);
         }
     }
@@ -195,7 +206,6 @@ public class GameScreen implements Screen {
 
         for (PowerUp powerUp : toBeDestroyed) {
             powerUps.removeValue(powerUp, true);
-            world.destroyBody(powerUp.b2body);
             powerUp.dispose();
         }
 

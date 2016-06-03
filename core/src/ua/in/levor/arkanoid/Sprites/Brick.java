@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid.Bricks;
+package ua.in.levor.arkanoid.Sprites;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -13,8 +13,12 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.Random;
+
 import ua.in.levor.arkanoid.Arkanoid;
-import ua.in.levor.arkanoid.PowerUps.PowerUpHelper;
+import ua.in.levor.arkanoid.Helpers.GameHelper;
+import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 
 public class Brick {
     public static final int TILE_SIZE = 24;
@@ -72,6 +76,7 @@ public class Brick {
     }
 
     public void handleHit() {
+        spawnCoin();
         switch (type) {
             case POWER:
                 // TODO: 6/1/16 add powerUp spawn
@@ -99,6 +104,12 @@ public class Brick {
                 break;
             default:
                 throw new RuntimeException("Unexpected block type!");
+        }
+    }
+
+    private void spawnCoin() {
+        if (new Random().nextInt(100) + 1 < (int)SkillsHelper.getInstance().getGoldFromBrickHitChance() * 100) {
+            GameHelper.getInstance().setGold(GameHelper.getInstance().getGold() + 1);
         }
     }
 

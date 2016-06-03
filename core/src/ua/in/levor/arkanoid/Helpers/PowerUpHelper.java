@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid.PowerUps;
+package ua.in.levor.arkanoid.Helpers;
 
 
 import com.badlogic.gdx.math.Vector2;

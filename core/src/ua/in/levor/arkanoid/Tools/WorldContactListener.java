@@ -8,11 +8,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 
-import ua.in.levor.arkanoid.Ball;
-import ua.in.levor.arkanoid.Bricks.Brick;
-import ua.in.levor.arkanoid.Bricks.BrickHelper;
-import ua.in.levor.arkanoid.Platform;
-import ua.in.levor.arkanoid.PowerUps.PowerUp;
+import ua.in.levor.arkanoid.Sprites.Ball;
+import ua.in.levor.arkanoid.Sprites.Brick;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
+import ua.in.levor.arkanoid.Sprites.Platform;
+import ua.in.levor.arkanoid.Sprites.PowerUp;
 
 public class WorldContactListener implements ContactListener {
     @Override

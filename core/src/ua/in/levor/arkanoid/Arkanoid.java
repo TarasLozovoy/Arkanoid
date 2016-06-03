@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import ua.in.levor.arkanoid.Helpers.GameHelper;
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
+import ua.in.levor.arkanoid.Screens.MenuScreen;
+
 public class Arkanoid extends Game {
 	public static final int WIDTH = 480;
 	public static final int HEIGHT = 800;
@@ -18,12 +22,13 @@ public class Arkanoid extends Game {
 	public static final short PLATFORM_BIT = 8;
 	public static final short DESTROYED_BIT = 16;
 
-	SpriteBatch batch;
+	public SpriteBatch batch;
 
 	@Override
 	public void create () {
+		init();
 		batch = new SpriteBatch();
-		this.setScreen(new GameScreen(this));
+		this.setScreen(new MenuScreen(this));
 	}
 
 	@Override
@@ -35,6 +40,16 @@ public class Arkanoid extends Game {
 	public void dispose() {
 		super.dispose();
 		batch.dispose();
+	}
+
+	private void init() {
+		SkillsHelper.getInstance().init();
+		GameHelper.getInstance().init();
+
+		// TODO: 6/3/16 remove when working with DB
+		GameHelper gameHelper = GameHelper.getInstance();
+		gameHelper.setGold(300);
+		gameHelper.setGems(10);
 	}
 
 	//methods for making scaling easier

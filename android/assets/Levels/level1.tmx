@@ -5,7 +5,7 @@
  </tileset>
  <layer name="Graphics" width="20" height="33">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2BkADYixQgBViBmAWJmHJgFqoZYN8HMw4dZcbgVm/2sRGJseokJIzYcYoT0jYJRMApGwSgYvgAAqD8A2w==
+   eJxjYBgFo2BkADYixQgBViBmAWJmHJgFqoZYN8HMw4dZcbgVm/2sRGJseskJD3x+GwWjYBSMglEwMgAAFc8Aww==
   </data>
  </layer>
  <objectgroup name="red">
@@ -62,9 +62,5 @@
   <object id="85" x="288" y="216" width="24" height="24"/>
   <object id="86" x="360" y="264" width="24" height="24"/>
   <object id="87" x="456" y="312" width="24" height="24"/>
-  <object id="91" x="120" y="312" width="24" height="24"/>
-  <object id="92" x="216" y="312" width="24" height="24"/>
-  <object id="93" x="240" y="312" width="24" height="24"/>
-  <object id="94" x="336" y="312" width="24" height="24"/>
  </objectgroup>
 </map>

@@ -1,4 +1,4 @@
-package ua.in.levor.arkanoid;
+package ua.in.levor.arkanoid.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import ua.in.levor.arkanoid.PowerUps.PowerUp;
+import ua.in.levor.arkanoid.Arkanoid;
 
 public class Ball extends Sprite {
     public static final int DIAMETER = 18;

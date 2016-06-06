@@ -40,4 +40,5 @@ task afterEclipseImport(description: "Post processing after project generation",
 dependencies {
     compile files('libs/gdx-sqlite-desktop.jar')
     compile files('libs/sqlite-jdbc-3.7.2.jar')
+    compile files('libs/bodyeditor-loader.jar')
 }

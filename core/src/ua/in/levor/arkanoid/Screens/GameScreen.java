@@ -71,7 +71,7 @@ public class GameScreen implements Screen {
         powerUpHelper = PowerUpHelper.getInstance();
 
         touchPosition = new Vector3();
-        bg = new Sprite(new Texture(Gdx.files.internal("level1.png")));
+        bg = new Sprite(new Texture(Gdx.files.internal("basic_bg.png")));
         statusBarBg = new Sprite(new Texture(Gdx.files.internal("statusBar_bg.png")));
         Arkanoid.adjustSize(bg);
         Arkanoid.adjustSize(statusBarBg);
@@ -111,7 +111,7 @@ public class GameScreen implements Screen {
         if (ball.isBelowYZero()) {
             GameHelper.getInstance().consumeLife();
             if (GameHelper.getInstance().getLives() > 0) {
-                ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x), 30.5f));
+                ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x) + Platform.WIDTH / 2, 30.5f));
                 ball.setIsActive(false);
             } else {
                 game.setScreen(new MenuScreen(game));

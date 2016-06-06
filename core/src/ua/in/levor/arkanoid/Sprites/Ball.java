@@ -27,7 +27,7 @@ public class Ball extends Sprite {
     private boolean isActive = false;
 
     public Ball(World world, Vector2 position) {
-        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("ball22.png")))));
+        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("ball.png")))));
         setScale(24 / DIAMETER);
         this.world = world;
         this.position = position;
@@ -76,6 +76,15 @@ public class Ball extends Sprite {
 //            y = 0;
 //            b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
 //        }
+
+        float velocityX = Math.abs(b2body.getLinearVelocity().x);
+        float velocityY = Math.abs(b2body.getLinearVelocity().y);
+
+        if (Math.abs(velocityY/(velocityX + velocityY)) < 15) {
+            float difY = velocityY * 0.025f;
+            b2body.getLinearVelocity().x += b2body.getLinearVelocity().x > 0 ? -difY : difY;
+            b2body.getLinearVelocity().y += b2body.getLinearVelocity().y > 0 ? difY : -difY;
+        }
 
 
         setPosition(x, y);

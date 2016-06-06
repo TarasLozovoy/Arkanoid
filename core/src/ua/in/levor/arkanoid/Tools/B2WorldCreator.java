@@ -10,10 +10,12 @@ import ua.in.levor.arkanoid.Sprites.Brick;
 import ua.in.levor.arkanoid.Helpers.BrickHelper;
 
 public class B2WorldCreator{
-    public static final int RED_BRICKS_LAYER = 1;
-    public static final int GRAY_BRICKS_LAYER = 2;
-    public static final int YELLOW_BRICKS_LAYER = 3;
-    public static final int POWERUP_BRICKS_LAYER = 4;
+    public static final int RED_BRICKS_LAYER = 2;
+    public static final int GRAY_BRICKS_LAYER = 3;
+    public static final int YELLOW3_BRICKS_LAYER = 4;
+    public static final int YELLOW2_BRICKS_LAYER = 5;
+    public static final int YELLOW1_BRICKS_LAYER = 6;
+    public static final int POWERUP_BRICKS_LAYER = 1;
 
     private BrickHelper brickHelper;
     public B2WorldCreator(World world, TiledMap map) {
@@ -31,10 +33,22 @@ public class B2WorldCreator{
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.GRAY));
         }
 
-        //creates yellow bricks body and fixtures
-        for (MapObject object : map.getLayers().get(YELLOW_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+        //creates yellow3 bricks body and fixtures
+        for (MapObject object : map.getLayers().get(YELLOW3_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW3));
+        }
+
+        //creates yellow2 bricks body and fixtures
+        for (MapObject object : map.getLayers().get(YELLOW2_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW2));
+        }
+
+        //creates yellow1 bricks body and fixtures
+        for (MapObject object : map.getLayers().get(YELLOW1_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW1));
         }
 
         //creates yellow bricks body and fixtures

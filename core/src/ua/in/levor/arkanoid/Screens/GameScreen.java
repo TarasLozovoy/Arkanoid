@@ -1,12 +1,12 @@
 package ua.in.levor.arkanoid.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
 import ua.in.levor.arkanoid.Helpers.BrickHelper;
@@ -39,9 +40,9 @@ public class GameScreen implements Screen {
     private Platform platform;
     private Array<PowerUp> powerUps = new Array<PowerUp>();
 
+    public Sprite statusBarBg;
     private Sprite bg;
-
-    private TextureAtlas atlas;
+    private int currentLevel;
 
     //powerUps
     private PowerUpHelper powerUpHelper;
@@ -59,8 +60,9 @@ public class GameScreen implements Screen {
 
     private StatusBar statusBar;
 
-    public GameScreen(Arkanoid game) {
+    public GameScreen(Arkanoid game, int level) {
         this.game = game;
+        this.currentLevel = level;
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
 
@@ -70,12 +72,12 @@ public class GameScreen implements Screen {
 
         touchPosition = new Vector3();
         bg = new Sprite(new Texture(Gdx.files.internal("level1.png")));
+        statusBarBg = new Sprite(new Texture(Gdx.files.internal("statusBar_bg.png")));
         Arkanoid.adjustSize(bg);
-
-        atlas = new TextureAtlas("Bricks/bricks.txt");
+        Arkanoid.adjustSize(statusBarBg);
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("Levels/level1.tmx");
+        map = mapLoader.load("Levels/level" + currentLevel + ".tmx");
         renderer = new OrthogonalTiledMapRenderer(map,  1 / Arkanoid.PPM);
 
         camera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
@@ -83,13 +85,15 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, 0), true);
         b2dr = new Box2DDebugRenderer();
 
-        ball = new Ball(world);
+        ball = new Ball(world, new Vector2(Arkanoid.WIDTH/2, 30.5f));
         platform = new Platform(world);
 
         world.setContactListener(new WorldContactListener());
 
         new B2WorldCreator(world, map);
 
+
+        Gdx.input.setCatchBackKey(true);
         System.out.println("GameScreen opened");
     }
 
@@ -105,7 +109,13 @@ public class GameScreen implements Screen {
 
         ball.update(dt);
         if (ball.isBelowYZero()) {
-            game.setScreen(new GameScreen(game));
+            GameHelper.getInstance().consumeLife();
+            if (GameHelper.getInstance().getLives() > 0) {
+                ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x), 30.5f));
+                ball.setIsActive(false);
+            } else {
+                game.setScreen(new MenuScreen(game));
+            }
         }
         statusBar.update();
 
@@ -118,7 +128,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         update(delta);
-        Gdx.gl.glClearColor(1f, 1f, 1f, 1);
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.setProjectionMatrix(camera.combined);
@@ -130,11 +140,11 @@ public class GameScreen implements Screen {
         for (PowerUp powerUp : powerUps) {
             powerUp.draw(game.batch);
         }
-
+        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
         game.batch.end();
 
         renderer.render();
-        b2dr.render(world, camera.combined);
+//        b2dr.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(statusBar.stage.getCamera().combined);
         statusBar.stage.draw();
@@ -146,6 +156,9 @@ public class GameScreen implements Screen {
             camera.unproject(touchPosition);
             platform.updatePosition(touchPosition.x);
             ball.setIsActive(true);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
+            game.setScreen(new MenuScreen(game));
         }
     }
 

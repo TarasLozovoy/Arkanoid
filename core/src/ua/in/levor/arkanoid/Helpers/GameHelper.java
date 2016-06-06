@@ -46,4 +46,8 @@ public class GameHelper {
     public void setLives(int lives) {
         this.lives = lives;
     }
+
+    public void consumeLife() {
+        lives--;
+    }
 }

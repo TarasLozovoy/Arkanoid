@@ -6,10 +6,15 @@ import com.badlogic.gdx.sql.DatabaseCursor;
 import com.badlogic.gdx.sql.DatabaseFactory;
 import com.badlogic.gdx.sql.SQLiteGdxException;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class DBHelper {
     private static DBHelper instance;
     private static final String DATABASE_NAME = "arkanoid.db";
     private static final int DATABASE_VERSION = 1;
+
+    private ExecutorService executor;
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table if not exists "
@@ -31,6 +36,10 @@ public class DBHelper {
     private Database database;
 
     private DBHelper() {
+        initDB();
+    }
+
+    public void initDB() {
         database = DatabaseFactory.getNewDatabase(DATABASE_NAME,
                 DATABASE_VERSION, DATABASE_CREATE, DATABASE_UPDATE);
         database.setupDatabase();
@@ -40,11 +49,7 @@ public class DBHelper {
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
         }
-
-        initDB();
-    }
-
-    private void initDB() {
+        executor = Executors.newSingleThreadExecutor();
         try {
             DatabaseCursor cursor = database.rawQuery("SELECT * FROM " + CurrencyTable.TABLE_NAME);
             if (cursor.getCount() < 1) {
@@ -86,30 +91,75 @@ public class DBHelper {
     }
 
     public void updateGold(long value) {
-        try {
-            database.beginTransaction();
-            database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GOLD + " = " + value);
-            database.setTransactionSuccessful();
-            database.endTransaction();
-            System.out.println("Written");
-
-        } catch (SQLiteGdxException e) {
-            e.printStackTrace();
-        }
+        executor.execute(new UpdateGoldTask(value));
     }
 
     public void updateGems(long value) {
-        try {
-            database.beginTransaction();
-            database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GEMS + " = " + value);
-            database.setTransactionSuccessful();
-            database.endTransaction();
+        executor.execute(new UpdateGemsTask(value));
+    }
 
+    public void pause() {
+        try {
+            database.closeDatabase();
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
         }
     }
 
+    public void resume() {
+        initDB();
+    }
+
+    public void dispose() {
+        try {
+            database.closeDatabase();
+        } catch (SQLiteGdxException e) {
+            e.printStackTrace();
+        }
+        executor.shutdown();
+    }
+
+    private class UpdateGoldTask implements Runnable {
+        private long value;
+
+        public UpdateGoldTask(long value) {
+            this.value = value;
+        }
+
+        @Override
+        public void run() {
+            try {
+                database.beginTransaction();
+                database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GOLD + " = " + value);
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+            } catch (SQLiteGdxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class UpdateGemsTask implements Runnable {
+        private long value;
+
+        public UpdateGemsTask(long value) {
+            this.value = value;
+        }
+
+        @Override
+        public void run() {
+            try {
+                database.beginTransaction();
+                database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GEMS + " = " + value);
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+            } catch (SQLiteGdxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 

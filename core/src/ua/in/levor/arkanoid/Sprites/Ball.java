@@ -22,13 +22,15 @@ public class Ball extends Sprite {
     public World world;
     public Body b2body;
 
+    private Vector2 position;
     private PowerUp.Type powerUpType = null;
     private boolean isActive = false;
 
-    public Ball(World world) {
+    public Ball(World world, Vector2 position) {
         super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("ball22.png")))));
         setScale(24 / DIAMETER);
         this.world = world;
+        this.position = position;
         defineBall();
 
         setBounds(0, 0, Arkanoid.scale(DIAMETER), Arkanoid.scale(DIAMETER));
@@ -37,7 +39,7 @@ public class Ball extends Sprite {
 
     private void defineBall() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(Arkanoid.scale(Arkanoid.WIDTH / 2), Arkanoid.scale(30.5f));
+        bdef.position.set(Arkanoid.scale(position.x), Arkanoid.scale(position.y));
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
 
@@ -66,7 +68,7 @@ public class Ball extends Sprite {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x * -1, b2body.getLinearVelocity().y);
         }
 
-        if (y + getHeight() > Arkanoid.scale(Arkanoid.HEIGHT)) {
+        if (y + getHeight()> Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) {
             y = Arkanoid.scale(Arkanoid.HEIGHT) - getHeight();
             b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
         }

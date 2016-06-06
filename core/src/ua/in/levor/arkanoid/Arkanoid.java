@@ -6,13 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import ua.in.levor.arkanoid.DB.DBHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 import ua.in.levor.arkanoid.Screens.MenuScreen;
 
 public class Arkanoid extends Game {
 	public static final int WIDTH = 480;
-	public static final int HEIGHT = 800;
+	public static final int STATUSBAR_HEIGHT = 50;
+	public static final int HEIGHT = 800 - STATUSBAR_HEIGHT;
 	public static final float PPM = 100;  	//pixels per meter
 	public static final String TITLE = "My cool Arkanoid";
 
@@ -31,6 +33,7 @@ public class Arkanoid extends Game {
 
 	@Override
 	public void create () {
+		DBHelper.getInstance().initDB();
 		init();
 		batch = new SpriteBatch();
 		this.setScreen(new MenuScreen(this));
@@ -42,9 +45,22 @@ public class Arkanoid extends Game {
 	}
 
 	@Override
+	public void pause() {
+		super.pause();
+		DBHelper.getInstance().pause();
+	}
+
+	@Override
+	public void resume() {
+		super.resume();
+		DBHelper.getInstance().initDB();
+	}
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		batch.dispose();
+		DBHelper.getInstance().dispose();
 	}
 
 	private void init() {

@@ -24,6 +24,11 @@ public class Arkanoid extends Game {
 
 	public SpriteBatch batch;
 
+	public Arkanoid() {
+		super();
+
+	}
+
 	@Override
 	public void create () {
 		init();
@@ -48,8 +53,8 @@ public class Arkanoid extends Game {
 
 		// TODO: 6/3/16 remove when working with DB
 		GameHelper gameHelper = GameHelper.getInstance();
-		gameHelper.setGold(300);
-		gameHelper.setGems(10);
+//		gameHelper.setGold(300);
+//		gameHelper.setGems(10);
 	}
 
 	//methods for making scaling easier

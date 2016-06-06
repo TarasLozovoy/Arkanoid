@@ -1,5 +1,7 @@
 package ua.in.levor.arkanoid.Helpers;
 
+import ua.in.levor.arkanoid.DB.DBHelper;
+
 public class GameHelper {
     private static GameHelper instance;
     private long gold;
@@ -16,23 +18,25 @@ public class GameHelper {
     }
 
     public void init() {
-        // TODO: 6/3/16 init from DB
+        gold = DBHelper.getInstance().getGoldFromDB();
+        gems = DBHelper.getInstance().getGemsFromDB();
     }
 
     public long getGold() {
         return gold;
     }
 
-    public void setGold(long gold) {
-        this.gold = gold;
+    public void addGold(long value) {
+        gold += value;
+        DBHelper.getInstance().updateGold(gold);
     }
 
     public int getGems() {
         return gems;
     }
 
-    public void setGems(int gems) {
-        this.gems = gems;
+    public void addGems(int value) {
+        gems += value;
     }
 
     public int getLives() {

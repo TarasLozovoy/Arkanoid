@@ -109,7 +109,7 @@ public class Brick {
 
     private void spawnCoin() {
         if (new Random().nextInt(100) + 1 < (int)SkillsHelper.getInstance().getGoldFromBrickHitChance() * 100) {
-            GameHelper.getInstance().setGold(GameHelper.getInstance().getGold() + 1);
+            GameHelper.getInstance().addGold(1);
         }
     }
 

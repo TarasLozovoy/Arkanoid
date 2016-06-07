@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -15,9 +14,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.Random;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 
 public class PowerUp extends Sprite {
-    public static final int GRAVITY = 150;
     public static final int WIDTH = 24;
     public static final int NUMBER_OF_POWERUPS_AVAILABLE = 3;
     public static final int BOMB_BURST_RADIUS = 40;
@@ -39,15 +38,15 @@ public class PowerUp extends Sprite {
         switch (new Random().nextInt(NUMBER_OF_POWERUPS_AVAILABLE)) {
             case 0:
                 type = Type.BOMB;
-                set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/1bomb_powerup.png")))));
+                set(Arkanoid.adjustSize(new Sprite(Type.BOMB.getTexture())));
                 break;
             case 1:
                 type = Type.STEEL_BALL;
-                set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/2steel_ball_powerup.png")))));
+                set(Arkanoid.adjustSize(new Sprite(Type.STEEL_BALL.getTexture())));
                 break;
             case 2:
                 type = Type.FIRE_BALL;
-                set(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("PowerUps/3fire_ball_powerup.png")))));
+                set(Arkanoid.adjustSize(new Sprite(Type.FIRE_BALL.getTexture())));
                 break;
         }
 
@@ -93,6 +92,18 @@ public class PowerUp extends Sprite {
     }
 
     public enum Type {
-        BOMB, STEEL_BALL, FIRE_BALL
+        BOMB, STEEL_BALL, FIRE_BALL;
+
+        public Texture getTexture() {
+            switch (this) {
+                case BOMB:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_BOMB));
+                case STEEL_BALL:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_STEEL_BALL));
+                case FIRE_BALL:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FIRE_BALL));
+            }
+            return null;
+        }
     }
 }

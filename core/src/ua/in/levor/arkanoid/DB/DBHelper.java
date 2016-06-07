@@ -34,6 +34,7 @@ public class DBHelper {
     }
 
     private Database database;
+    private boolean DBopened;
 
     private DBHelper() {
         initDB();
@@ -46,6 +47,7 @@ public class DBHelper {
 
         try {
             database.openOrCreateDatabase();
+            DBopened = true;
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
         }
@@ -53,13 +55,10 @@ public class DBHelper {
         try {
             DatabaseCursor cursor = database.rawQuery("SELECT * FROM " + CurrencyTable.TABLE_NAME);
             if (cursor.getCount() < 1) {
-                database.beginTransaction();
-                database.execSQL("INSERT INTO " + CurrencyTable.TABLE_NAME + "(" + CurrencyTable.Cols.GOLD + ") VALUES (" + 300 + ")");
-                database.execSQL("INSERT INTO " + CurrencyTable.TABLE_NAME + "(" + CurrencyTable.Cols.GEMS + ") VALUES (" + 10 + ")");
-                database.setTransactionSuccessful();
-                database.endTransaction();
+                database.execSQL("INSERT INTO " + CurrencyTable.TABLE_NAME + " DEFAULT VALUES;");
 
                 System.out.println(getGoldFromDB());
+                System.out.println(getGemsFromDB());
             }
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
@@ -101,6 +100,7 @@ public class DBHelper {
     public void pause() {
         try {
             database.closeDatabase();
+            DBopened = false;
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
         }
@@ -113,6 +113,7 @@ public class DBHelper {
     public void dispose() {
         try {
             database.closeDatabase();
+            DBopened = false;
         } catch (SQLiteGdxException e) {
             e.printStackTrace();
         }
@@ -128,6 +129,7 @@ public class DBHelper {
 
         @Override
         public void run() {
+            if (!DBopened) return;
             try {
                 database.beginTransaction();
                 database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GOLD + " = " + value);
@@ -150,6 +152,7 @@ public class DBHelper {
         @Override
         public void run() {
             try {
+                if (!DBopened) return;
                 database.beginTransaction();
                 database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GEMS + " = " + value);
                 database.setTransactionSuccessful();

@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
+import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
 import ua.in.levor.arkanoid.Helpers.BrickHelper;
@@ -48,6 +49,9 @@ public class GameScreen implements Screen {
     private PowerUpHelper powerUpHelper;
     private float powerUpTimer;
     private PowerUp.Type powerUpType;
+    private Sprite activePowerUp;
+    private Texture activePowerUpBlank;
+    private boolean showingPowerUp = false;
 
 
     //box2d
@@ -71,10 +75,13 @@ public class GameScreen implements Screen {
         powerUpHelper = PowerUpHelper.getInstance();
 
         touchPosition = new Vector3();
-        bg = new Sprite(new Texture(Gdx.files.internal("basic_bg.png")));
-        statusBarBg = new Sprite(new Texture(Gdx.files.internal("statusBar_bg.png")));
+        bg = new Sprite(new Texture(Gdx.files.internal(AssetsHelper.PART_1_BACKGROUND)));
+        statusBarBg = new Sprite(new Texture(Gdx.files.internal(AssetsHelper.STATUS_BAR_BLACKOUT_BACKGROUND)));
+        activePowerUpBlank = new Texture(Gdx.files.internal(AssetsHelper.BLANK));
+        activePowerUp = new Sprite(activePowerUpBlank);
         Arkanoid.adjustSize(bg);
         Arkanoid.adjustSize(statusBarBg);
+        Arkanoid.adjustSize(activePowerUp);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("Levels/level" + currentLevel + ".tmx");
@@ -134,13 +141,14 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         bg.draw(game.batch);
+        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
+        activePowerUp.draw(game.batch);
         ball.draw(game.batch);
         platform.draw(game.batch);
 
         for (PowerUp powerUp : powerUps) {
             powerUp.draw(game.batch);
         }
-        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
         game.batch.end();
 
         renderer.render();
@@ -207,11 +215,11 @@ public class GameScreen implements Screen {
         Array<PowerUp> toBeDestroyed = new Array<PowerUp>();
         for (PowerUp powerUp : powerUps) {
             powerUp.update(dt);
-            if (powerUp.isReady()) {
+            if (powerUp.isReady() && powerUp.getTexture() != null) {
                 toBeDestroyed.add(powerUp);
-                // TODO: 6/1/16 add powerUp action
-                powerUpTimer = 20;
                 powerUpType = powerUp.getType();
+                showActivePowerUp(powerUpTimer > 0);
+                powerUpTimer = 20;
             } else if (powerUp.b2body.getPosition().y < 0) {
                 toBeDestroyed.add(powerUp);
             }
@@ -226,8 +234,23 @@ public class GameScreen implements Screen {
             System.out.println(powerUpTimer);
             powerUpTimer -= dt;
             ball.setPowerUp(powerUpType);
-        } else {
+        } else if (powerUpType != null){
             ball.setPowerUp(null);
+            powerUpType = null;
+            showActivePowerUp(false);
+        }
+    }
+
+    private void showActivePowerUp(boolean replaceCurrent) {
+        if (powerUpType == null && showingPowerUp) {
+            activePowerUp.setTexture(activePowerUpBlank);
+            showingPowerUp = false;
+        } else if (powerUpType != null && (!showingPowerUp || replaceCurrent)) {
+            Sprite sprite = new Sprite(powerUpType.getTexture());
+            Arkanoid.adjustSize(sprite);
+            activePowerUp.set(sprite);
+            activePowerUp.setPosition(0, Arkanoid.scale(Arkanoid.HEIGHT) - activePowerUp.getHeight());
+            showingPowerUp = true;
         }
     }
 

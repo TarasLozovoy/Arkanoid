@@ -26,7 +26,6 @@ public class Brick {
 
     protected World world;
     protected TiledMap map;
-    protected TiledMapTile tile;
     protected Rectangle bounds;
     protected Body body;
     protected Fixture fixture;
@@ -53,6 +52,7 @@ public class Brick {
 
         shape.setAsBox(Arkanoid.scale(bounds.getWidth() / 2), Arkanoid.scale(bounds.getHeight() / 2));
         fdef.shape = shape;
+        fdef.friction = 0;
         fixture = body.createFixture(fdef);
         fixture.setUserData(this);
 
@@ -79,7 +79,6 @@ public class Brick {
         spawnCoin();
         switch (type) {
             case POWER:
-                // TODO: 6/1/16 add powerUp spawn
                 destroy();
                 PowerUpHelper.getInstance().requestNewPowerUp(body.getPosition());
                 break;

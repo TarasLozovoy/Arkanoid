@@ -12,12 +12,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 
 public class Ball extends Sprite {
     public static final int DIAMETER = 18;
     public static final int RADIUS = DIAMETER / 2;
-    public static final float DEFAULT_VELOCITY_X = 2f;
-    public static final float DEFAULT_VELOCITY_y = 1.9f;
+    public static final float DEFAULT_VELOCITY_X = 0.01f;
+    public static final float DEFAULT_VELOCITY_y = 3f;
 
     public World world;
     public Body b2body;
@@ -25,9 +26,10 @@ public class Ball extends Sprite {
     private Vector2 position;
     private PowerUp.Type powerUpType = null;
     private boolean isActive = false;
+    private float absSpeed;
 
     public Ball(World world, Vector2 position) {
-        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("ball.png")))));
+        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal(AssetsHelper.BALL_PART_1)))));
         setScale(24 / DIAMETER);
         this.world = world;
         this.position = position;
@@ -69,7 +71,7 @@ public class Ball extends Sprite {
         }
 
         if (y + getHeight()> Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) {
-            y = Arkanoid.scale(Arkanoid.HEIGHT) - getHeight();
+            y = Arkanoid.scale(Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) - getHeight();
             b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
         }
 //        else if (y < 0) {
@@ -80,10 +82,22 @@ public class Ball extends Sprite {
         float velocityX = Math.abs(b2body.getLinearVelocity().x);
         float velocityY = Math.abs(b2body.getLinearVelocity().y);
 
-        if (Math.abs(velocityY/(velocityX + velocityY)) < 15) {
-            float difY = velocityY * 0.025f;
-            b2body.getLinearVelocity().x += b2body.getLinearVelocity().x > 0 ? -difY : difY;
-            b2body.getLinearVelocity().y += b2body.getLinearVelocity().y > 0 ? difY : -difY;
+        if (Math.abs(velocityY/(velocityX + velocityY)) < 0.15) {
+            float difX = velocityX * 0.01f;
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x + (b2body.getLinearVelocity().x > 0 ? -difX : difX),
+                    b2body.getLinearVelocity().y + (b2body.getLinearVelocity().y > 0 ? difX : -difX) * 1.15f);
+            System.out.println("Low Y speed! x: " + velocityX + "y: " + velocityY);
+        }
+
+        //normalizing speed
+        if (calcAbsSpeed() < absSpeed * 0.97) {
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.01f, b2body.getLinearVelocity().y * 1.01f);
+            System.out.println("Increasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
+                    + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
+        } else if (calcAbsSpeed() > absSpeed / 0.97) {
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x / 1.01f, b2body.getLinearVelocity().y / 1.01f);
+            System.out.println("Decreasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
+                    + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
         }
 
 
@@ -101,6 +115,7 @@ public class Ball extends Sprite {
         if (!this.isActive && isActive) {
             this.isActive = isActive;
             b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X, DEFAULT_VELOCITY_y), b2body.getWorldCenter(), true);
+            absSpeed = calcAbsSpeed();
         }
     }
 
@@ -114,5 +129,9 @@ public class Ball extends Sprite {
 
     public PowerUp.Type getPowerUpType() {
         return powerUpType;
+    }
+
+    private float calcAbsSpeed() {
+        return (float) Math.sqrt(Math.pow(b2body.getLinearVelocity().x, 2) + Math.pow(b2body.getLinearVelocity().y, 2));
     }
 }

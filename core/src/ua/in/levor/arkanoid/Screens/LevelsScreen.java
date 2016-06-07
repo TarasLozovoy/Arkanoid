@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 
 public class LevelsScreen implements Screen {
@@ -69,7 +70,7 @@ public class LevelsScreen implements Screen {
 
         skin.add("white", new Texture(pixmap));
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/DoctorJekyllNF.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(AssetsHelper.FONT_DOCTOR_JEKYLL));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 35;
         BitmapFont font = generator.generateFont(parameter);

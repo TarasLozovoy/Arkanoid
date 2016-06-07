@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Tools.BodyEditorLoader;
 
 public class Platform extends Sprite {
@@ -21,7 +22,7 @@ public class Platform extends Sprite {
     public Body b2body;
 
     public Platform(World world) {
-        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal("basic_platform.png")))));
+        super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal(AssetsHelper.PLATFORM)))));
         this.world = world;
         definePlatform();
 
@@ -32,7 +33,7 @@ public class Platform extends Sprite {
     }
 
     private void definePlatform() {
-        BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("Platform/basic_platform"));
+        BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal(AssetsHelper.PLATFORM_FIXTURE_SHAPE_JSON_PART_1));
 
         BodyDef bdef = new BodyDef();
         bdef.position.set(Arkanoid.scale(Arkanoid.WIDTH / 2 - WIDTH / 2), Arkanoid.scale(10));
@@ -44,6 +45,7 @@ public class Platform extends Sprite {
 //        shape.setAsBox(Arkanoid.scale(WIDTH / 2), Arkanoid.scale(HEIGHT / 2));
         fdef.filter.categoryBits = Arkanoid.PLATFORM_BIT;
         fdef.density = 1f;
+        fdef.friction = 0;
 
         loader.attachFixture(b2body, "basic_platform", fdef, Arkanoid.scale(WIDTH));
 

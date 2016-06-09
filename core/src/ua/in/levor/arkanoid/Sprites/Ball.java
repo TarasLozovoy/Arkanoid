@@ -134,4 +134,8 @@ public class Ball extends Sprite {
     private float calcAbsSpeed() {
         return (float) Math.sqrt(Math.pow(b2body.getLinearVelocity().x, 2) + Math.pow(b2body.getLinearVelocity().y, 2));
     }
+
+    public void changeSpeed(float mult) {
+        absSpeed *= mult;
+    }
 }

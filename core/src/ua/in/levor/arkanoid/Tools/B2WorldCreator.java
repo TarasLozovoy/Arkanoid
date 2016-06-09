@@ -16,6 +16,13 @@ public class B2WorldCreator{
     public static final int YELLOW2_BRICKS_LAYER = 5;
     public static final int YELLOW1_BRICKS_LAYER = 6;
     public static final int POWERUP_BRICKS_LAYER = 1;
+    public static final int UNDESTROYABLE_WALL_BRICKS_LAYER = 7;
+    public static final int SLOW_DOWN_BRICKS_LAYER = 8;
+    public static final int SPEED_UP_BRICKS_LAYER = 9;
+    public static final int ORANGE_BRICKS_LAYER = 10;
+    public static final int HALF_WALL_BRICKS_LAYER = 11;
+    public static final int ICE_BRICKS_LAYER = 12;
+    public static final int TNT_BRICKS_LAYER = 13;
 
     private BrickHelper brickHelper;
     public B2WorldCreator(World world, TiledMap map) {
@@ -36,25 +43,63 @@ public class B2WorldCreator{
         //creates yellow3 bricks body and fixtures
         for (MapObject object : map.getLayers().get(YELLOW3_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
-            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW3));
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.BROWN3));
         }
 
         //creates yellow2 bricks body and fixtures
         for (MapObject object : map.getLayers().get(YELLOW2_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
-            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW2));
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.BROWN2));
         }
 
         //creates yellow1 bricks body and fixtures
         for (MapObject object : map.getLayers().get(YELLOW1_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
-            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.YELLOW1));
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.BROWN1));
         }
 
         //creates yellow bricks body and fixtures
         for (MapObject object : map.getLayers().get(POWERUP_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.POWER));
+        }
+
+        //creates walls bricks body and fixtures
+        for (MapObject object : map.getLayers().get(UNDESTROYABLE_WALL_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.WALL));
+        }
+
+        //creates speed up bricks body and fixtures
+        for (MapObject object : map.getLayers().get(SPEED_UP_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.SPEED_UP));
+        }
+
+        //creates slow down bricks body and fixtures
+        for (MapObject object : map.getLayers().get(SLOW_DOWN_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.SLOW_DOWN));
+        }
+
+        for (MapObject object : map.getLayers().get(ORANGE_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.ORANGE));
+        }
+
+        for (MapObject object : map.getLayers().get(HALF_WALL_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.HALF_WALL));
+        }
+
+        for (MapObject object : map.getLayers().get(ICE_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.ICE));
+        }
+
+        for (MapObject object : map.getLayers().get(TNT_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.TNT));
         }
     }
 }

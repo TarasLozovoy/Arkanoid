@@ -1,7 +1,6 @@
 package ua.in.levor.arkanoid.Sprites;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,12 +15,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import java.util.Random;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
 import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 
 public class Brick {
     public static final int TILE_SIZE = 24;
+    public static final int TNT_BURST_RADIUS = 60;
     private TiledMapTileSet tileSet;
 
     protected World world;
@@ -71,11 +72,13 @@ public class Brick {
         return layer.getCell((int) Arkanoid.unscale(body.getPosition().x) / TILE_SIZE, (int) Arkanoid.unscale(body.getPosition().y) / TILE_SIZE);
     }
 
-    public World getWorld() {
-        return world;
+    public void frozeBrick() {
+        getCell().setTile(tileSet.getTile(Type.ICE.getIdInMap()));
+        type = Type.ICE;
     }
 
     public void handleHit() {
+        if (destroy) return;
         spawnCoin();
         switch (type) {
             case POWER:
@@ -87,19 +90,33 @@ public class Brick {
                 type = Type.GRAY;
                 break;
             case GRAY:
-                getCell().setTile(tileSet.getTile(Type.YELLOW3.getIdInMap()));
-                type = Type.YELLOW3;
+                getCell().setTile(tileSet.getTile(Type.BROWN3.getIdInMap()));
+                type = Type.BROWN3;
                 break;
-            case YELLOW3:
-                getCell().setTile(tileSet.getTile(Type.YELLOW2.getIdInMap()));
-                type = Type.YELLOW2;
+            case BROWN3:
+                getCell().setTile(tileSet.getTile(Type.BROWN2.getIdInMap()));
+                type = Type.BROWN2;
                 break;
-            case YELLOW2:
-                getCell().setTile(tileSet.getTile(Type.YELLOW1.getIdInMap()));
-                type = Type.YELLOW1;
+            case BROWN2:
+                getCell().setTile(tileSet.getTile(Type.BROWN1.getIdInMap()));
+                type = Type.BROWN1;
                 break;
-            case YELLOW1:
+            case BROWN1:
+            case ORANGE:
+            case SLOW_DOWN:
+            case SPEED_UP:
+            case ICE:
+            case HALF_WALL:
                 destroy();
+                break;
+            case TNT:
+                destroy();
+                for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(TNT_BURST_RADIUS, body.getPosition())) {
+                    b.handleHit();
+                }
+                break;
+            case WALL:
+                //do nothing
                 break;
             default:
                 throw new RuntimeException("Unexpected block type!");
@@ -126,9 +143,16 @@ public class Brick {
         return body;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public enum Type {
         POWER(6),
-        RED(5), GRAY(4), YELLOW3(3), YELLOW2(2), YELLOW1(1);
+        WALL(7), HALF_WALL(11),
+        SPEED_UP(8), SLOW_DOWN(9),
+        RED(5), GRAY(4), BROWN3(3), BROWN2(2), BROWN1(1), ORANGE(10), ICE(12),
+        TNT(13);
 
         int idInMap;
 

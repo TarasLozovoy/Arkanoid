@@ -18,7 +18,7 @@ import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 
 public class PowerUp extends Sprite {
     public static final int WIDTH = 24;
-    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 3;
+    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 7;
     public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
@@ -47,6 +47,23 @@ public class PowerUp extends Sprite {
             case 2:
                 type = Type.FIRE_BALL;
                 set(Arkanoid.adjustSize(new Sprite(Type.FIRE_BALL.getTexture())));
+                break;
+            case 3:
+                type = Type.MAGNET;
+                // TODO: 6/8/16 add action
+                set(Arkanoid.adjustSize(new Sprite(Type.MAGNET.getTexture())));
+                break;
+            case 4:
+                type = Type.SLOW;
+                set(Arkanoid.adjustSize(new Sprite(Type.SLOW.getTexture())));
+                break;
+            case 5:
+                type = Type.FREEZE;
+                set(Arkanoid.adjustSize(new Sprite(Type.FREEZE.getTexture())));
+                break;
+            case 6:
+                type = Type.SPEED_UP;
+                set(Arkanoid.adjustSize(new Sprite(Type.SPEED_UP.getTexture())));
                 break;
         }
 
@@ -92,7 +109,7 @@ public class PowerUp extends Sprite {
     }
 
     public enum Type {
-        BOMB, STEEL_BALL, FIRE_BALL;
+        BOMB, STEEL_BALL, FIRE_BALL, MAGNET, SLOW, FREEZE, SPEED_UP;
 
         public Texture getTexture() {
             switch (this) {
@@ -102,6 +119,14 @@ public class PowerUp extends Sprite {
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_STEEL_BALL));
                 case FIRE_BALL:
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FIRE_BALL));
+                case MAGNET:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_MAGNET));
+                case SLOW:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_SLOW));
+                case FREEZE:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FREEZE));
+                case SPEED_UP:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_SPEED_UP));
             }
             return null;
         }

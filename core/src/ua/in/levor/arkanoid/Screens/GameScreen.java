@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Arkanoid;
+import ua.in.levor.arkanoid.DB.DBHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
@@ -177,7 +178,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-
+        DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
     }
 
     @Override
@@ -187,7 +188,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-
+        DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
     }
 
     private void updateBricks(float dt) {
@@ -217,9 +218,11 @@ public class GameScreen implements Screen {
             powerUp.update(dt);
             if (powerUp.isReady() && powerUp.getTexture() != null) {
                 toBeDestroyed.add(powerUp);
-                powerUpType = powerUp.getType();
-                showActivePowerUp(powerUpTimer > 0);
-                powerUpTimer = 20;
+                if (!handleNewPowerUp(powerUp.getType())) {
+                    powerUpType = powerUp.getType();
+                    showActivePowerUp(powerUpTimer > 0);
+                    powerUpTimer = 20;
+                }
             } else if (powerUp.b2body.getPosition().y < 0) {
                 toBeDestroyed.add(powerUp);
             }
@@ -239,6 +242,18 @@ public class GameScreen implements Screen {
             powerUpType = null;
             showActivePowerUp(false);
         }
+    }
+
+    private boolean handleNewPowerUp(PowerUp.Type type) {
+        switch (type) {
+            case SLOW:
+                ball.changeSpeed(0.9f);
+                return true;
+            case SPEED_UP:
+                ball.changeSpeed(1.1f);
+                return true;
+        }
+        return false;
     }
 
     private void showActivePowerUp(boolean replaceCurrent) {

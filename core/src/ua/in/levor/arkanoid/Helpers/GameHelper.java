@@ -28,7 +28,6 @@ public class GameHelper {
 
     public void addGold(long value) {
         gold += value;
-        DBHelper.getInstance().updateGold(gold);
     }
 
     public int getGems() {

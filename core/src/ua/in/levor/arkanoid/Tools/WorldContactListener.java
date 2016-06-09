@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
+import com.badlogic.gdx.utils.Array;
 
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
@@ -27,9 +28,14 @@ public class WorldContactListener implements ContactListener {
                 Brick brick = ((Brick)object.getUserData());
                 Ball ballObj = ((Ball)ball.getUserData());
 
+                WorldManifold manifold = contact.getWorldManifold();
+                Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
+
+                boolean wallHit = brick.getType() == Brick.Type.HALF_WALL && intersection.y < brick.getBody().getPosition().y
+                        || brick.getType() == Brick.Type.WALL;
+                if (wallHit && ballObj.getPowerUpType() != PowerUp.Type.FREEZE) return;
+
                 if (ballObj.getPowerUpType() == PowerUp.Type.BOMB) {
-                    WorldManifold manifold = contact.getWorldManifold();
-                    Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
                     for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(PowerUp.BOMB_BURST_RADIUS, intersection)) {
                         b.handleHit();
                     }
@@ -39,8 +45,18 @@ public class WorldContactListener implements ContactListener {
                 } else if (ballObj.getPowerUpType() == PowerUp.Type.FIRE_BALL) {
                     brick.handleHit();
                     brick.destroy();
+                } else if (ballObj.getPowerUpType() == PowerUp.Type.FREEZE && brick.getType() != Brick.Type.ICE
+                        && brick.getType() != Brick.Type.POWER) {
+                    // TODO: 6/8/16 make brick frozen
+                    brick.frozeBrick();
                 } else {
                     brick.handleHit();
+                }
+
+                if (brick.getType() == Brick.Type.SPEED_UP) {
+                    ballObj.changeSpeed(1.1f);
+                } else if (brick.getType() == Brick.Type.SLOW_DOWN) {
+                    ballObj.changeSpeed(0.9f);
                 }
             }
         }

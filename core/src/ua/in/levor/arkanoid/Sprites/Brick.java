@@ -98,15 +98,15 @@ public class Brick {
                 type = Type.BROWN2;
                 break;
             case BROWN2:
-                getCell().setTile(tileSet.getTile(Type.BROWN1.getIdInMap()));
-                type = Type.BROWN1;
+                getCell().setTile(tileSet.getTile(Type.DURABILITY1.getIdInMap()));
+                type = Type.DURABILITY1;
                 break;
-            case BROWN1:
-            case ORANGE:
+            case DURABILITY1:
             case SLOW_DOWN:
             case SPEED_UP:
             case ICE:
             case HALF_WALL:
+            case OOPS:
                 destroy();
                 break;
             case TNT:
@@ -149,10 +149,11 @@ public class Brick {
 
     public enum Type {
         POWER(6),
-        WALL(7), HALF_WALL(11),
+        WALL(7), HALF_WALL(13),
         SPEED_UP(8), SLOW_DOWN(9),
-        RED(5), GRAY(4), BROWN3(3), BROWN2(2), BROWN1(1), ORANGE(10), ICE(12),
-        TNT(13);
+        RED(5), GRAY(4), BROWN3(3), BROWN2(2), DURABILITY1(1), ICE(14),
+        TNT(15),
+        OOPS(16);
 
         int idInMap;
 

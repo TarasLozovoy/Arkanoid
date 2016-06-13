@@ -35,7 +35,7 @@ public class Ball extends Sprite {
         this.position = position;
         defineBall();
 
-        setBounds(0, 0, Arkanoid.scale(DIAMETER), Arkanoid.scale(DIAMETER));
+        setBounds(position.x, position.y, Arkanoid.scale(DIAMETER), Arkanoid.scale(DIAMETER));
         setOrigin(Arkanoid.scale(RADIUS), Arkanoid.scale(RADIUS));
     }
 
@@ -71,7 +71,7 @@ public class Ball extends Sprite {
         }
 
         if (y + getHeight()> Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) {
-            y = Arkanoid.scale(Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) - getHeight();
+            y = Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30)) - getHeight();
             b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
         }
 //        else if (y < 0) {
@@ -137,5 +137,9 @@ public class Ball extends Sprite {
 
     public void changeSpeed(float mult) {
         absSpeed *= mult;
+    }
+
+    public void hide() {
+        setAlpha(0f);
     }
 }

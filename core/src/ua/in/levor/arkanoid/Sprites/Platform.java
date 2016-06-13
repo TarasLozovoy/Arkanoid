@@ -26,7 +26,7 @@ public class Platform extends Sprite {
         this.world = world;
         definePlatform();
 
-        setBounds(0, 0, Arkanoid.scale(WIDTH), Arkanoid.scale(HEIGHT));
+        setBounds(Arkanoid.scale(WIDTH) / 2, 0, Arkanoid.scale(WIDTH), Arkanoid.scale(HEIGHT));
         float xBody = b2body.getPosition().x;
         float yBody = b2body.getPosition().y;
         setPosition(xBody, yBody);
@@ -36,7 +36,7 @@ public class Platform extends Sprite {
         BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal(AssetsHelper.PLATFORM_FIXTURE_SHAPE_JSON_PART_1));
 
         BodyDef bdef = new BodyDef();
-        bdef.position.set(Arkanoid.scale(Arkanoid.WIDTH / 2 - WIDTH / 2), Arkanoid.scale(10));
+        bdef.position.set(Arkanoid.scale(Arkanoid.WIDTH / 2 - WIDTH / 2), Arkanoid.scale(100));
         bdef.type = BodyDef.BodyType.StaticBody;
         b2body = world.createBody(bdef);
 
@@ -47,7 +47,7 @@ public class Platform extends Sprite {
         fdef.density = 1f;
         fdef.friction = 0;
 
-        loader.attachFixture(b2body, "basic_platform", fdef, Arkanoid.scale(WIDTH));
+        loader.attachFixture(b2body, "part_1_platform", fdef, Arkanoid.scale(WIDTH));
 
 //        fdef.shape = shape;
 //        Fixture fixture = b2body.createFixture(fdef);
@@ -63,7 +63,7 @@ public class Platform extends Sprite {
     }
 
     public void updatePosition(float x) {
-        b2body.setTransform(x, b2body.getPosition().y, b2body.getAngle());
+        b2body.setTransform(x - Arkanoid.scale(WIDTH / 2), b2body.getPosition().y, b2body.getAngle());
 
         if (b2body.getPosition().x < 0) {
             b2body.setTransform(0, b2body.getPosition().y, b2body.getAngle());

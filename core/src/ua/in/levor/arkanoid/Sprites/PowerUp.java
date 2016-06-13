@@ -18,7 +18,7 @@ import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 
 public class PowerUp extends Sprite {
     public static final int WIDTH = 24;
-    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 7;
+    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 8;
     public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
@@ -65,6 +65,10 @@ public class PowerUp extends Sprite {
                 type = Type.SPEED_UP;
                 set(Arkanoid.adjustSize(new Sprite(Type.SPEED_UP.getTexture())));
                 break;
+            case 7:
+                type = Type.ADD_BALL;
+                set(Arkanoid.adjustSize(new Sprite(Type.ADD_BALL.getTexture())));
+                break;
         }
 
         definePowerUp();
@@ -109,7 +113,7 @@ public class PowerUp extends Sprite {
     }
 
     public enum Type {
-        BOMB, STEEL_BALL, FIRE_BALL, MAGNET, SLOW, FREEZE, SPEED_UP;
+        BOMB, STEEL_BALL, FIRE_BALL, MAGNET, SLOW, FREEZE, SPEED_UP, ADD_BALL;
 
         public Texture getTexture() {
             switch (this) {
@@ -127,6 +131,8 @@ public class PowerUp extends Sprite {
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FREEZE));
                 case SPEED_UP:
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_SPEED_UP));
+                case ADD_BALL:
+                    return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_ADDITIONAL_BALL));
             }
             return null;
         }

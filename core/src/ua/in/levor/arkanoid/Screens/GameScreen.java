@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
     private Viewport gamePort;
 
     private Vector3 touchPosition;
-    private Ball ball;
+    private Array<Ball> balls = new Array<Ball>();
     private Platform platform;
     private Array<PowerUp> powerUps = new Array<PowerUp>();
 
@@ -93,8 +93,11 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, 0), true);
         b2dr = new Box2DDebugRenderer();
 
-        ball = new Ball(world, new Vector2(Arkanoid.WIDTH/2, 30.5f));
+//        Ball ball = new Ball(world, new Vector2(Arkanoid.WIDTH/2, 30.5f));
+//        balls.add(ball);
+
         platform = new Platform(world);
+        spawnNewBall();
 
         world.setContactListener(new WorldContactListener());
 
@@ -115,22 +118,45 @@ public class GameScreen implements Screen {
         camera.update();
         world.step(1 / 60f, 6, 2);
 
-        ball.update(dt);
-        if (ball.isBelowYZero()) {
-            GameHelper.getInstance().consumeLife();
-            if (GameHelper.getInstance().getLives() > 0) {
-                ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x) + Platform.WIDTH / 2, 30.5f));
-                ball.setIsActive(false);
-            } else {
-                game.setScreen(new MenuScreen(game));
-            }
-        }
+        updateBall(dt);
         statusBar.update();
 
         renderer.setView(camera);
 
         updatePowerUps(dt);
         updateBricks(dt);
+    }
+
+    private void updateBall(float dt) {
+        Array<Ball> destroyableBalls = new Array<Ball>();
+        for (Ball ball : balls) {
+            ball.update(dt);
+            if (ball.isBelowYZero()) {
+                destroyableBalls.add(ball);
+            }
+        }
+
+        for (Ball ball : destroyableBalls) {
+            balls.removeValue(ball, true);
+            ball.hide();
+            world.destroyBody(ball.b2body);
+            ball.dispose();
+            if (balls.size == 0) {
+                GameHelper.getInstance().consumeLife();
+                if (GameHelper.getInstance().getLives() > 0) {
+                    spawnNewBall();
+                } else {
+                    game.setScreen(new MenuScreen(game));
+                }
+            }
+        }
+    }
+
+    private void spawnNewBall() {
+        Ball ball;
+        ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x) + Platform.WIDTH / 2, 120.5f));
+        ball.setIsActive(false);
+        balls.add(ball);
     }
 
     @Override
@@ -144,7 +170,9 @@ public class GameScreen implements Screen {
         bg.draw(game.batch);
         game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
         activePowerUp.draw(game.batch);
-        ball.draw(game.batch);
+        for (Ball ball : balls) {
+            ball.draw(game.batch);
+        }
         platform.draw(game.batch);
 
         for (PowerUp powerUp : powerUps) {
@@ -164,7 +192,9 @@ public class GameScreen implements Screen {
             touchPosition.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPosition);
             platform.updatePosition(touchPosition.x);
-            ball.setIsActive(true);
+            for (Ball ball : balls) {
+                ball.setIsActive(true);
+            }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             game.setScreen(new MenuScreen(game));
@@ -202,6 +232,14 @@ public class GameScreen implements Screen {
         for (Brick br : destroyArray) {
             BrickHelper.getInstance().getAllBricks().removeValue(br, true);
         }
+
+        //checking for oops block activation
+        if (BrickHelper.getInstance().isOopsActive()) {
+            BrickHelper.getInstance().updateOopsBlockTimer(dt);
+            platform.setAlpha(0.01f);
+        } else {
+            platform.setAlpha(1f);
+        }
     }
 
     private void updatePowerUps(float dt) {
@@ -236,9 +274,13 @@ public class GameScreen implements Screen {
         if (powerUpTimer > 0) {
             System.out.println(powerUpTimer);
             powerUpTimer -= dt;
-            ball.setPowerUp(powerUpType);
+            for (Ball ball : balls) {
+                ball.setPowerUp(powerUpType);
+            }
         } else if (powerUpType != null){
-            ball.setPowerUp(null);
+            for (Ball ball : balls) {
+                ball.setPowerUp(null);
+            }
             powerUpType = null;
             showActivePowerUp(false);
         }
@@ -247,10 +289,17 @@ public class GameScreen implements Screen {
     private boolean handleNewPowerUp(PowerUp.Type type) {
         switch (type) {
             case SLOW:
-                ball.changeSpeed(0.9f);
+                for (Ball ball : balls) {
+                    ball.changeSpeed(0.9f);
+                }
                 return true;
             case SPEED_UP:
-                ball.changeSpeed(1.1f);
+                for (Ball ball : balls) {
+                    ball.changeSpeed(1.1f);
+                }
+                return true;
+            case ADD_BALL:
+                spawnNewBall();
                 return true;
         }
         return false;
@@ -271,7 +320,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        ball.dispose();
+        for (Ball ball : balls) {
+            ball.dispose();
+        }
         platform.dispose();
         bg.getTexture().dispose();
     }

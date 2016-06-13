@@ -3,10 +3,10 @@ package ua.in.levor.arkanoid.Helpers;
 
 public class AssetsHelper {
     public static final String BALL_PART_1 = "ball1.png";
-    public static final String PLATFORM = "basic_platform.png";
-    public static final String PLATFORM_FIXTURE_SHAPE_JSON_PART_1 = "Platform/basic_platform";
-    public static final String GOLD_COIN = "Gold-coin-icon.png";
-    public static final String DIAMOND = "Diamond/Diamond-icon16.png";
+    public static final String PLATFORM = "Platforms/part_1_platform.png";
+    public static final String PLATFORM_FIXTURE_SHAPE_JSON_PART_1 = "Platforms/part_1_platform_body_form";
+    public static final String GOLD_COIN = "gold.png";
+    public static final String DIAMOND = "gem.png";
     public static final String BLANK = "blank.png";
     public static final String MENU_BUTTON = "menu_button.png";
 
@@ -18,6 +18,7 @@ public class AssetsHelper {
     public static final String POWER_UP_SLOW = "PowerUps/slow_ball.png";
     public static final String POWER_UP_FREEZE = "PowerUps/snow.png";
     public static final String POWER_UP_SPEED_UP = "PowerUps/speed.png";
+    public static final String POWER_UP_ADDITIONAL_BALL = "PowerUps/doubleBall.png";
 
     //background images
     public static final String STATUS_BAR_BLACKOUT_BACKGROUND = "statusBar_bg.png";

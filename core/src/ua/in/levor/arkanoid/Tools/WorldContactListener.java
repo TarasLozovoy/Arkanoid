@@ -46,8 +46,8 @@ public class WorldContactListener implements ContactListener {
                     brick.handleHit();
                     brick.destroy();
                 } else if (ballObj.getPowerUpType() == PowerUp.Type.FREEZE && brick.getType() != Brick.Type.ICE
-                        && brick.getType() != Brick.Type.POWER) {
-                    // TODO: 6/8/16 make brick frozen
+                        && brick.getType() != Brick.Type.POWER
+                        && brick.getType() != Brick.Type.OOPS) {
                     brick.frozeBrick();
                 } else {
                     brick.handleHit();
@@ -57,6 +57,9 @@ public class WorldContactListener implements ContactListener {
                     ballObj.changeSpeed(1.1f);
                 } else if (brick.getType() == Brick.Type.SLOW_DOWN) {
                     ballObj.changeSpeed(0.9f);
+                }
+                else if (brick.getType() == Brick.Type.OOPS) {
+                    BrickHelper.getInstance().handleOopsBlockHit();
                 }
             }
         }

@@ -11,6 +11,8 @@ public class BrickHelper {
     private static BrickHelper instance;
 
     private Array<Brick> bricks = new Array<Brick>();
+    private float oopsBlockTimer;
+    private boolean oopsActive;
 
     private BrickHelper() {}
 
@@ -45,4 +47,21 @@ public class BrickHelper {
 
         return inRadius;
     }
+
+    public void handleOopsBlockHit() {
+        oopsBlockTimer = 7.5f;
+        oopsActive = true;
+    }
+
+    public boolean isOopsActive() {
+        return oopsActive;
+    }
+
+    public void updateOopsBlockTimer(float dt) {
+        oopsBlockTimer -= dt;
+        if (oopsBlockTimer < 0.11) {
+            oopsActive = false;
+        }
+    }
+
 }

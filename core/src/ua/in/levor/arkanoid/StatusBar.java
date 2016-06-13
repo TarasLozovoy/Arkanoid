@@ -5,12 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -21,12 +24,16 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
+import ua.in.levor.arkanoid.Screens.DefaultScreen;
 import ua.in.levor.arkanoid.Screens.MenuScreen;
 
 public class StatusBar implements Disposable{
     public Stage stage;
     private Viewport viewport;
     private GameHelper gameHelper;
+    private SpriteBatch batch;
+
+    public Stage pauseStage;
 
     private long gold;
     private int gems;
@@ -41,6 +48,7 @@ public class StatusBar implements Disposable{
     private TextButton livesLabel;
 
     public StatusBar(SpriteBatch spriteBatch) {
+        this.batch = spriteBatch;
         gameHelper = GameHelper.getInstance();
 
         viewport = new StretchViewport(Arkanoid.WIDTH, Arkanoid.HEIGHT, new OrthographicCamera());
@@ -106,11 +114,11 @@ public class StatusBar implements Disposable{
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = generator.generateFont(parameter);
         textButtonStyle.fontColor = Color.CHARTREUSE;
-        TextButton menu = new TextButton("Menu", textButtonStyle);
+        TextButton menu = new TextButton("Pause", textButtonStyle);
         menu.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                Arkanoid instance = ((Arkanoid) Gdx.app.getApplicationListener());
-                instance.setScreen(new MenuScreen(instance));
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.getScreen().pause();
             }
         });
 
@@ -128,6 +136,51 @@ public class StatusBar implements Disposable{
         stage.addActor(table);
 
         generator.dispose();
+    }
+
+    public void initPauseStage() {
+        pauseStage = new Stage(viewport, batch);
+        Skin skin = new Skin();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(AssetsHelper.FONT_DOCTOR_JEKYLL));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 25;
+        parameter.color = Color.TAN;
+        BitmapFont font = generator.generateFont(parameter); // font size 12 pixels
+        generator.dispose(); // don't forget to dispose to avoid memory leaks!
+
+        Texture buttonTexture = new Texture(AssetsHelper.MENU_BUTTON);
+        Sprite button = new Sprite(buttonTexture);
+        skin.add("button", buttonTexture);
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.newDrawable("button", Color.LIGHT_GRAY);
+
+        textButtonStyle.font = font;
+
+        float xPosition = Arkanoid.WIDTH / 2 - 100;
+
+        TextButton resumeButton = new TextButton("Resume", textButtonStyle);
+        resumeButton.setPosition(xPosition, 400);
+        resumeButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.getCurrentScreen().setState(DefaultScreen.GameState.RUNNING);
+            }
+        });
+
+        TextButton menuButton = new TextButton("Main menu", textButtonStyle);
+        menuButton.setPosition(xPosition, resumeButton.getY() - 65);
+        menuButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.setScreen(new MenuScreen(gameInstance));
+            }
+        });
+
+
+        pauseStage.addActor(resumeButton);
+        pauseStage.addActor(menuButton);
     }
 
     public void update() {

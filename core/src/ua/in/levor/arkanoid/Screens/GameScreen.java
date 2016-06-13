@@ -2,6 +2,7 @@ package ua.in.levor.arkanoid.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,50 +21,53 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.DB.DBHelper;
-import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
+import ua.in.levor.arkanoid.Helpers.GameHelper;
+import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
-import ua.in.levor.arkanoid.Helpers.BrickHelper;
 import ua.in.levor.arkanoid.Sprites.Platform;
 import ua.in.levor.arkanoid.Sprites.PowerUp;
-import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
 import ua.in.levor.arkanoid.StatusBar;
 import ua.in.levor.arkanoid.Tools.B2WorldCreator;
 import ua.in.levor.arkanoid.Tools.WorldContactListener;
 
-public class GameScreen implements Screen {
+public class GameScreen implements DefaultScreen {
     private Arkanoid game;
     private OrthographicCamera camera;
     private Viewport gamePort;
+    private GameState gameState;
 
     private Vector3 touchPosition;
+
     private Array<Ball> balls = new Array<Ball>();
     private Platform platform;
     private Array<PowerUp> powerUps = new Array<PowerUp>();
-
     public Sprite statusBarBg;
+
     private Sprite bg;
     private int currentLevel;
-
     //powerUps
     private PowerUpHelper powerUpHelper;
+
     private float powerUpTimer;
     private PowerUp.Type powerUpType;
     private Sprite activePowerUp;
     private Texture activePowerUpBlank;
     private boolean showingPowerUp = false;
-
-
     //box2d
     private World world;
-    private Box2DDebugRenderer b2dr;
 
+
+    private Box2DDebugRenderer b2dr;
     private TmxMapLoader mapLoader;
+
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
-
     private StatusBar statusBar;
+
+    private InputMultiplexer inputMultiplexer;
 
     public GameScreen(Arkanoid game, int level) {
         this.game = game;
@@ -72,6 +76,7 @@ public class GameScreen implements Screen {
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
 
         statusBar = new StatusBar(game.batch);
+        gameState = GameState.RUNNING;
 
         powerUpHelper = PowerUpHelper.getInstance();
 
@@ -103,9 +108,14 @@ public class GameScreen implements Screen {
 
         new B2WorldCreator(world, map);
 
-
+        inputMultiplexer = new InputMultiplexer();
+        Gdx.input.setInputProcessor(inputMultiplexer);
         Gdx.input.setCatchBackKey(true);
-        System.out.println("GameScreen opened");
+
+        statusBar.initPauseStage();
+        inputMultiplexer.addProcessor(statusBar.stage);
+        inputMultiplexer.addProcessor(statusBar.pauseStage);
+
     }
 
     @Override
@@ -114,6 +124,7 @@ public class GameScreen implements Screen {
     }
 
     public void update(float dt) {
+        if (gameState != GameState.RUNNING) return;
         handleInput(dt);
         camera.update();
         world.step(1 / 60f, 6, 2);
@@ -185,6 +196,11 @@ public class GameScreen implements Screen {
 
         game.batch.setProjectionMatrix(statusBar.stage.getCamera().combined);
         statusBar.stage.draw();
+
+        if (gameState == GameState.PAUSED) {
+            statusBar.pauseStage.act();
+            statusBar.pauseStage.draw();
+        }
     }
 
     private void handleInput(float dt) {
@@ -209,6 +225,7 @@ public class GameScreen implements Screen {
     @Override
     public void pause() {
         DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
+        gameState = GameState.PAUSED;
     }
 
     @Override
@@ -316,6 +333,11 @@ public class GameScreen implements Screen {
             activePowerUp.setPosition(0, Arkanoid.scale(Arkanoid.HEIGHT) - activePowerUp.getHeight());
             showingPowerUp = true;
         }
+    }
+
+    @Override
+    public void setState(GameState state) {
+        gameState = state;
     }
 
     @Override

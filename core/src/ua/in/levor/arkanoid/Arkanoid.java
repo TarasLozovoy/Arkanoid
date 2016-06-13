@@ -1,6 +1,7 @@
 package ua.in.levor.arkanoid;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import ua.in.levor.arkanoid.DB.DBHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.SkillsHelper;
+import ua.in.levor.arkanoid.Screens.DefaultScreen;
 import ua.in.levor.arkanoid.Screens.MenuScreen;
 
 public class Arkanoid extends Game {
@@ -63,14 +65,13 @@ public class Arkanoid extends Game {
 		DBHelper.getInstance().dispose();
 	}
 
+	public DefaultScreen getCurrentScreen() {
+		return (DefaultScreen)super.getScreen();
+	}
+
 	private void init() {
 		SkillsHelper.getInstance().init();
 		GameHelper.getInstance().init();
-
-		// TODO: 6/3/16 remove when working with DB
-		GameHelper gameHelper = GameHelper.getInstance();
-//		gameHelper.setGold(300);
-//		gameHelper.setGems(10);
 	}
 
 	//methods for making scaling easier

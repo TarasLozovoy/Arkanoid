@@ -25,7 +25,7 @@ import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 
-public class LevelsScreen implements Screen {
+public class LevelsScreen implements DefaultScreen {
     private Skin skin;
     private Stage stage;
     private OrthographicCamera camera;
@@ -156,5 +156,10 @@ public class LevelsScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    @Override
+    public void setState(GameState state) {
+
     }
 }

@@ -129,7 +129,7 @@ public class DBHelper {
 
         @Override
         public void run() {
-            if (!DBopened) return;
+            if (!DBopened) initDB();
             try {
                 database.beginTransaction();
                 database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GOLD + " = " + value);
@@ -152,7 +152,7 @@ public class DBHelper {
         @Override
         public void run() {
             try {
-                if (!DBopened) return;
+                if (!DBopened) initDB();
                 database.beginTransaction();
                 database.execSQL("UPDATE " + CurrencyTable.TABLE_NAME + " SET " + CurrencyTable.Cols.GEMS + " = " + value);
                 database.setTransactionSuccessful();

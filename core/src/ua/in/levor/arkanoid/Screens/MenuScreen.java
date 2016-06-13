@@ -27,7 +27,7 @@ import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 
-public class MenuScreen implements Screen{
+public class MenuScreen implements DefaultScreen{
     private Stage stage;
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -154,5 +154,10 @@ public class MenuScreen implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void setState(GameState state) {
+
     }
 }

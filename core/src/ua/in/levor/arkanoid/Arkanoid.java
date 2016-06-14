@@ -8,7 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import ua.in.levor.arkanoid.DB.DBHelper;
+import ua.in.levor.arkanoid.Helpers.BrickHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
+import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
 import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 import ua.in.levor.arkanoid.Screens.DefaultScreen;
 import ua.in.levor.arkanoid.Screens.MenuScreen;

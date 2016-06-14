@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -25,15 +26,18 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Screens.DefaultScreen;
+import ua.in.levor.arkanoid.Screens.GameScreen;
 import ua.in.levor.arkanoid.Screens.MenuScreen;
 
 public class StatusBar implements Disposable{
-    public Stage stage;
+    public Stage statusStage;
     private Viewport viewport;
     private GameHelper gameHelper;
     private SpriteBatch batch;
 
     public Stage pauseStage;
+    public Stage levelClearedStage;
+    public Stage gameOverStage;
 
     private long gold;
     private int gems;
@@ -52,8 +56,8 @@ public class StatusBar implements Disposable{
         gameHelper = GameHelper.getInstance();
 
         viewport = new StretchViewport(Arkanoid.WIDTH, Arkanoid.HEIGHT, new OrthographicCamera());
-        stage = new Stage(viewport, spriteBatch);
-        Gdx.input.setInputProcessor(stage);
+        statusStage = new Stage(viewport, spriteBatch);
+        Gdx.input.setInputProcessor(statusStage);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/DoctorJekyllNF.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -118,7 +122,7 @@ public class StatusBar implements Disposable{
         menu.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
-                gameInstance.getScreen().pause();
+                gameInstance.getCurrentScreen().setState(DefaultScreen.GameState.PAUSED);
             }
         });
 
@@ -133,7 +137,7 @@ public class StatusBar implements Disposable{
 
         update();
 
-        stage.addActor(table);
+        statusStage.addActor(table);
 
         generator.dispose();
     }
@@ -146,10 +150,8 @@ public class StatusBar implements Disposable{
         parameter.size = 25;
         parameter.color = Color.TAN;
         BitmapFont font = generator.generateFont(parameter); // font size 12 pixels
-        generator.dispose(); // don't forget to dispose to avoid memory leaks!
 
         Texture buttonTexture = new Texture(AssetsHelper.MENU_BUTTON);
-        Sprite button = new Sprite(buttonTexture);
         skin.add("button", buttonTexture);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
@@ -158,7 +160,7 @@ public class StatusBar implements Disposable{
 
         textButtonStyle.font = font;
 
-        float xPosition = Arkanoid.WIDTH / 2 - 100;
+        float xPosition = Arkanoid.WIDTH / 2 - buttonTexture.getWidth() / 2;
 
         TextButton resumeButton = new TextButton("Resume", textButtonStyle);
         resumeButton.setPosition(xPosition, 400);
@@ -169,8 +171,17 @@ public class StatusBar implements Disposable{
             }
         });
 
+        TextButton tryAgainButton = new TextButton("Start over", textButtonStyle);
+        tryAgainButton.setPosition(xPosition, resumeButton.getY() - 65);
+        tryAgainButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                ((GameScreen) gameInstance.getCurrentScreen()).retry();
+            }
+        });
+
         TextButton menuButton = new TextButton("Main menu", textButtonStyle);
-        menuButton.setPosition(xPosition, resumeButton.getY() - 65);
+        menuButton.setPosition(xPosition, tryAgainButton.getY() - 65);
         menuButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
@@ -179,8 +190,130 @@ public class StatusBar implements Disposable{
         });
 
 
+        parameter.size = 45;
+        parameter.color = Color.TAN;
+        BitmapFont fontLabel = generator.generateFont(parameter);
+        generator.dispose(); // don't forget to dispose to avoid memory leaks!
+        Label.LabelStyle labelStyle = new Label.LabelStyle(fontLabel, Color.TAN);
+        Label label = new Label("Game paused", labelStyle);
+        label.setPosition(Arkanoid.WIDTH / 2 - label.getWidth() / 2, 500);
+
+        pauseStage.addActor(label);
         pauseStage.addActor(resumeButton);
+        pauseStage.addActor(tryAgainButton);
         pauseStage.addActor(menuButton);
+    }
+
+    public void initLevelClearedStage() {
+        levelClearedStage = new Stage(viewport, batch);
+        Skin skin = new Skin();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(AssetsHelper.FONT_DOCTOR_JEKYLL));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 25;
+        parameter.color = Color.TAN;
+        BitmapFont font = generator.generateFont(parameter);
+
+        Texture buttonTexture = new Texture(AssetsHelper.MENU_BUTTON);
+        skin.add("button", buttonTexture);
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.newDrawable("button", Color.LIGHT_GRAY);
+
+        textButtonStyle.font = font;
+
+        float xPosition = Arkanoid.WIDTH / 2 - buttonTexture.getWidth() / 2;
+
+        TextButton nextLevelButton = new TextButton("Next Level", textButtonStyle);
+        nextLevelButton.setPosition(xPosition, 400);
+        nextLevelButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.getCurrentScreen().proceedToNextLevel();
+            }
+        });
+
+        TextButton tryAgainButton = new TextButton("Start over", textButtonStyle);
+        tryAgainButton.setPosition(xPosition, nextLevelButton.getY() - 65);
+        tryAgainButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                ((GameScreen) gameInstance.getCurrentScreen()).retry();
+            }
+        });
+
+        TextButton menuButton = new TextButton("Main menu", textButtonStyle);
+        menuButton.setPosition(xPosition, tryAgainButton.getY() - 65);
+        menuButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.setScreen(new MenuScreen(gameInstance));
+            }
+        });
+
+        parameter.size = 45;
+        parameter.color = Color.TAN;
+        BitmapFont fontLabel = generator.generateFont(parameter);
+        generator.dispose(); // don't forget to dispose to avoid memory leaks!
+        Label.LabelStyle labelStyle = new Label.LabelStyle(fontLabel, Color.TAN);
+        Label levelClearedLabel = new Label("Level cleared", labelStyle);
+        levelClearedLabel.setPosition(Arkanoid.WIDTH / 2 - levelClearedLabel.getWidth() / 2, 500);
+
+        levelClearedStage.addActor(levelClearedLabel);
+        levelClearedStage.addActor(nextLevelButton);
+        levelClearedStage.addActor(tryAgainButton);
+        levelClearedStage.addActor(menuButton);
+    }
+
+    public void initGameOverStage() {
+        gameOverStage = new Stage(viewport, batch);
+        Skin skin = new Skin();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(AssetsHelper.FONT_DOCTOR_JEKYLL));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 25;
+        parameter.color = Color.TAN;
+        BitmapFont font = generator.generateFont(parameter);
+
+        Texture buttonTexture = new Texture(AssetsHelper.MENU_BUTTON);
+        skin.add("button", buttonTexture);
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.newDrawable("button", Color.LIGHT_GRAY);
+
+        textButtonStyle.font = font;
+
+        float xPosition = Arkanoid.WIDTH / 2 - buttonTexture.getWidth() / 2;
+
+        TextButton tryAgainButton = new TextButton("Try again", textButtonStyle);
+        tryAgainButton.setPosition(xPosition, 400);
+        tryAgainButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                ((GameScreen) gameInstance.getCurrentScreen()).retry();
+            }
+        });
+
+        TextButton menuButton = new TextButton("Main menu", textButtonStyle);
+        menuButton.setPosition(xPosition, tryAgainButton.getY() - 65);
+        menuButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
+                gameInstance.setScreen(new MenuScreen(gameInstance));
+            }
+        });
+
+        parameter.size = 45;
+        parameter.color = Color.TAN;
+        BitmapFont fontLabel = generator.generateFont(parameter);
+        generator.dispose(); // don't forget to dispose to avoid memory leaks!
+        Label.LabelStyle labelStyle = new Label.LabelStyle(fontLabel, Color.TAN);
+        Label gameOverLabel = new Label("Game over", labelStyle);
+        gameOverLabel.setPosition(Arkanoid.WIDTH / 2 - gameOverLabel.getWidth() / 2, 500);
+
+        gameOverStage.addActor(gameOverLabel);
+        gameOverStage.addActor(tryAgainButton);
+        gameOverStage.addActor(menuButton);
     }
 
     public void update() {
@@ -194,7 +327,7 @@ public class StatusBar implements Disposable{
 
     @Override
     public void dispose() {
-        stage.dispose();
+        statusStage.dispose();
         goldSprite.dispose();
         gemsSprite.dispose();
         ballSprite.dispose();

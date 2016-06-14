@@ -3,7 +3,6 @@ package ua.in.levor.arkanoid.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,6 +37,7 @@ public class GameScreen implements DefaultScreen {
     private OrthographicCamera camera;
     private Viewport gamePort;
     private GameState gameState;
+    private GameState oldgameState;
 
     private Vector3 touchPosition;
 
@@ -67,11 +67,11 @@ public class GameScreen implements DefaultScreen {
     private OrthogonalTiledMapRenderer renderer;
     private StatusBar statusBar;
 
-    private InputMultiplexer inputMultiplexer;
-
     public GameScreen(Arkanoid game, int level) {
         this.game = game;
         this.currentLevel = level;
+        BrickHelper.getInstance().clear();
+        GameHelper.getInstance().setLives(2);
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
 
@@ -108,14 +108,11 @@ public class GameScreen implements DefaultScreen {
 
         new B2WorldCreator(world, map);
 
-        inputMultiplexer = new InputMultiplexer();
-        Gdx.input.setInputProcessor(inputMultiplexer);
         Gdx.input.setCatchBackKey(true);
 
         statusBar.initPauseStage();
-        inputMultiplexer.addProcessor(statusBar.stage);
-        inputMultiplexer.addProcessor(statusBar.pauseStage);
-
+        statusBar.initLevelClearedStage();
+        statusBar.initGameOverStage();
     }
 
     @Override
@@ -157,7 +154,7 @@ public class GameScreen implements DefaultScreen {
                 if (GameHelper.getInstance().getLives() > 0) {
                     spawnNewBall();
                 } else {
-                    game.setScreen(new MenuScreen(game));
+                    gameState = GameState.GAME_OVER;
                 }
             }
         }
@@ -172,6 +169,10 @@ public class GameScreen implements DefaultScreen {
 
     @Override
     public void render(float delta) {
+        if (gameState != oldgameState) {
+            oldgameState = gameState;
+            System.out.println(gameState);
+        }
         update(delta);
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -194,12 +195,23 @@ public class GameScreen implements DefaultScreen {
         renderer.render();
 //        b2dr.render(world, camera.combined);
 
-        game.batch.setProjectionMatrix(statusBar.stage.getCamera().combined);
-        statusBar.stage.draw();
+        game.batch.setProjectionMatrix(statusBar.statusStage.getCamera().combined);
+        statusBar.statusStage.draw();
 
         if (gameState == GameState.PAUSED) {
+            Gdx.input.setInputProcessor(statusBar.pauseStage);
             statusBar.pauseStage.act();
             statusBar.pauseStage.draw();
+        } else if (gameState == GameState.LEVEL_CLEARED) {
+            Gdx.input.setInputProcessor(statusBar.levelClearedStage);
+            statusBar.levelClearedStage.act();
+            statusBar.levelClearedStage.draw();
+        } else if (gameState == GameState.GAME_OVER) {
+            Gdx.input.setInputProcessor(statusBar.gameOverStage);
+            statusBar.gameOverStage.act();
+            statusBar.gameOverStage.draw();
+        } else if (gameState == GameState.RUNNING) {
+            Gdx.input.setInputProcessor(statusBar.statusStage);
         }
     }
 
@@ -225,7 +237,9 @@ public class GameScreen implements DefaultScreen {
     @Override
     public void pause() {
         DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
-        gameState = GameState.PAUSED;
+//        if (gameState == GameState.RUNNING) {
+//            gameState = GameState.PAUSED;
+//        }
     }
 
     @Override
@@ -257,6 +271,16 @@ public class GameScreen implements DefaultScreen {
         } else {
             platform.setAlpha(1f);
         }
+
+        if (BrickHelper.getInstance().isAllBricksDestroyed()) {
+            levelCleared();
+        }
+    }
+
+    private void levelCleared() {
+        gameState = GameState.LEVEL_CLEARED;
+        GameHelper.getInstance().addGold(100);
+        DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
     }
 
     private void updatePowerUps(float dt) {
@@ -338,6 +362,15 @@ public class GameScreen implements DefaultScreen {
     @Override
     public void setState(GameState state) {
         gameState = state;
+    }
+
+    @Override
+    public void proceedToNextLevel() {
+        // TODO: 6/14/16 add checking if end of part
+        game.setScreen(new GameScreen(game, currentLevel + 1));
+    }
+    public void retry() {
+        game.setScreen(new GameScreen(game, currentLevel));
     }
 
     @Override

@@ -64,4 +64,16 @@ public class BrickHelper {
         }
     }
 
+    public boolean isAllBricksDestroyed() {
+        for (Brick b : bricks) {
+            if (b.getType() != Brick.Type.WALL) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void clear() {
+        bricks.clear();
+    }
 }

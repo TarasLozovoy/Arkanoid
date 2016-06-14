@@ -42,7 +42,6 @@ public class MenuScreen implements DefaultScreen{
         camera.setToOrtho(false, Arkanoid.WIDTH / 2, Arkanoid.HEIGHT / 2);
 
         create();
-        GameHelper.getInstance().setLives(5);
         Gdx.input.setCatchBackKey(false);
     }
 
@@ -159,5 +158,10 @@ public class MenuScreen implements DefaultScreen{
     @Override
     public void setState(GameState state) {
 
+    }
+
+    @Override
+    public void proceedToNextLevel() {
+        //ignore
     }
 }

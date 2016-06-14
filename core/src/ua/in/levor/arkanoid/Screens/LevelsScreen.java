@@ -40,7 +40,6 @@ public class LevelsScreen implements DefaultScreen {
         camera.setToOrtho(false, Arkanoid.WIDTH / 2, Arkanoid.HEIGHT / 2);
 
         create();
-        GameHelper.getInstance().setLives(5);
     }
 
     public void create(){
@@ -161,5 +160,10 @@ public class LevelsScreen implements DefaultScreen {
     @Override
     public void setState(GameState state) {
 
+    }
+
+    @Override
+    public void proceedToNextLevel() {
+        // TODO: 6/14/16 proceed to next part
     }
 }

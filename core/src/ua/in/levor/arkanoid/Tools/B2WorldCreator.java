@@ -31,7 +31,6 @@ public class B2WorldCreator{
         for (MapObject object : map.getLayers().get(RED_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.RED));
-
         }
 
         //creates gray bricks body and fixtures

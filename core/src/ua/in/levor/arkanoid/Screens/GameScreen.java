@@ -2,7 +2,6 @@ package ua.in.levor.arkanoid.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -44,7 +43,7 @@ public class GameScreen implements DefaultScreen {
     private Array<Ball> balls = new Array<Ball>();
     private Platform platform;
     private Array<PowerUp> powerUps = new Array<PowerUp>();
-//    public Sprite statusBarBg;
+    private boolean touchPerformed = false;
 
     private Sprite bg;
     private int currentLevel;
@@ -222,6 +221,14 @@ public class GameScreen implements DefaultScreen {
             touchPosition.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPosition);
             platform.updatePosition(touchPosition.x);
+            for (Ball ball : balls) {
+                if (!ball.isActive()) {
+                    ball.b2body.setTransform(touchPosition.x, ball.b2body.getPosition().y, ball.b2body.getAngle());
+                }
+            }
+            touchPerformed = true;
+        } else if (touchPerformed) {
+            touchPerformed = false;
             for (Ball ball : balls) {
                 ball.setIsActive(true);
             }

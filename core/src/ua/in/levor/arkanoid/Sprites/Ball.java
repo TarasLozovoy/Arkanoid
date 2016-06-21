@@ -19,8 +19,8 @@ import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 public class Ball extends Sprite {
     public static final int DIAMETER = 18;
     public static final int RADIUS = DIAMETER / 2;
-    public static final float DEFAULT_VELOCITY_X = 0.01f;
-    public static final float DEFAULT_VELOCITY_y = 3f;
+    public static final float DEFAULT_VELOCITY_X = 0.5f;
+    public static final float DEFAULT_VELOCITY_y = 2.5f;
 
     public World world;
     public Body b2body;
@@ -76,8 +76,8 @@ public class Ball extends Sprite {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x * -1, b2body.getLinearVelocity().y);
         }
 
-        if (y + getHeight() > Arkanoid.scale(Arkanoid.HEIGHT - 30 - 2)) {
-            y = Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30)) - getHeight();
+        if (y + getHeight() > Arkanoid.scale(Arkanoid.HEIGHT - 30)) {
+            y = Arkanoid.scale(Arkanoid.HEIGHT - 30) - getHeight();
             b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
         }
 //        else if (y < 0) {
@@ -85,15 +85,19 @@ public class Ball extends Sprite {
 //            b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
 //        }
 
+        b2body.setTransform(x + getWidth() / 2, y + getHeight() / 2, b2body.getAngle());
+
         float velocityX = Math.abs(b2body.getLinearVelocity().x);
         float velocityY = Math.abs(b2body.getLinearVelocity().y);
+        System.out.println(" x: " + velocityX + "y: " + velocityY);
+        System.out.println(" xpos: " + x + "ypos: " + y);
 
         if (Math.abs(velocityY/(velocityX + velocityY)) < 0.15) {
             float difX = velocityX * 0.01f;
             b2body.setLinearVelocity(b2body.getLinearVelocity().x + (b2body.getLinearVelocity().x > 0 ? -difX : difX),
                     b2body.getLinearVelocity().y + (b2body.getLinearVelocity().y > 0 ? difX : -difX) * 1.15f);
             System.out.println("Low Y speed! x: " + velocityX + "y: " + velocityY);
-        } else if (Math.abs(velocityX) < 0.2) {
+        } else if (Math.abs(velocityX) < 0.5) {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.1f,
                     b2body.getLinearVelocity().y);
         }
@@ -108,7 +112,6 @@ public class Ball extends Sprite {
             System.out.println("Decreasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
                     + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
         }
-
 
         setPosition(x, y);
         if (isActive) {
@@ -126,6 +129,10 @@ public class Ball extends Sprite {
             b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X, DEFAULT_VELOCITY_y), b2body.getWorldCenter(), true);
             absSpeed = calcAbsSpeed();
         }
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     public Ball cloneBall() {

@@ -38,16 +38,13 @@ public class MenuScreen implements DefaultScreen{
     public MenuScreen(Arkanoid game) {
         this.game = game;
 
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, Arkanoid.WIDTH / 2, Arkanoid.HEIGHT / 2);
-
         create();
         Gdx.input.setCatchBackKey(false);
     }
 
     public void create(){
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Arkanoid.WIDTH / 2, Arkanoid.HEIGHT / 2);
+        camera.setToOrtho(false, Arkanoid.WIDTH, Arkanoid.HEIGHT);
         viewport = new StretchViewport(Arkanoid.WIDTH, Arkanoid.HEIGHT, camera);
         viewport.apply();
 
@@ -94,18 +91,26 @@ public class MenuScreen implements DefaultScreen{
         });
 
         TextButton skillsButton = new TextButton("Skills", textButtonStyle);
-        skillsButton.setPosition(xPosition, 525);
+        skillsButton.setPosition(xPosition, playButton.getY() - 75);
         skillsButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                ((TextButton) actor).setText("Skills pressed");
+                game.setScreen(new SkillsScreen(game));
             }
         });
 
         TextButton levelsButton = new TextButton("Select level", textButtonStyle);
-        levelsButton.setPosition(xPosition, 450);
+        levelsButton.setPosition(xPosition, skillsButton.getY() - 75);
         levelsButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new LevelsScreen(game));
+            }
+        });
+
+        TextButton exitButton = new TextButton("Exit", textButtonStyle);
+        exitButton.setPosition(xPosition, levelsButton.getY() - 75);
+        exitButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
             }
         });
 
@@ -113,6 +118,7 @@ public class MenuScreen implements DefaultScreen{
         stage.addActor(playButton);
         stage.addActor(skillsButton);
         stage.addActor(levelsButton);
+        stage.addActor(exitButton);
     }
 
     @Override

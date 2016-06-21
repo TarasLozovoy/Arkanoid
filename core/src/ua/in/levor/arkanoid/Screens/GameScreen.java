@@ -75,7 +75,7 @@ public class GameScreen implements DefaultScreen {
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
 
-        statusBar = new StatusBar(game.batch);
+        statusBar = new StatusBar(game.batch, false);
         gameState = GameState.RUNNING;
 
         powerUpHelper = PowerUpHelper.getInstance();
@@ -161,10 +161,18 @@ public class GameScreen implements DefaultScreen {
     }
 
     private void spawnNewBall() {
-        Ball ball;
-        ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x) + Platform.WIDTH / 2, 120.5f));
-        ball.setIsActive(false);
-        balls.add(ball);
+        if (balls.size > 0) {
+            Array<Ball> newBalls = new Array<Ball>();
+            for (Ball ball : balls) {
+                Ball newBall = ball.cloneBall();
+                newBalls.add(newBall);
+            }
+            balls.addAll(newBalls);
+        } else {
+            Ball ball = new Ball(world, new Vector2(Arkanoid.unscale(platform.b2body.getPosition().x) + Platform.WIDTH / 2, 120.5f));
+            ball.setIsActive(false);
+            balls.add(ball);
+        }
     }
 
     @Override
@@ -180,8 +188,6 @@ public class GameScreen implements DefaultScreen {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         bg.draw(game.batch);
-//        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
-        activePowerUp.draw(game.batch);
         for (Ball ball : balls) {
             ball.draw(game.batch);
         }
@@ -204,6 +210,11 @@ public class GameScreen implements DefaultScreen {
         } else {
             statusBar.showDialog(gameState);
         }
+
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
+        activePowerUp.draw(game.batch);
+        game.batch.end();
     }
 
     private void handleInput(float dt) {

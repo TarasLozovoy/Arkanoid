@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -54,7 +53,7 @@ public class StatusBar implements Disposable{
     private TextButton gemsLabel;
     private TextButton livesLabel;
 
-    public StatusBar(SpriteBatch spriteBatch) {
+    public StatusBar(SpriteBatch spriteBatch, boolean partial) {
         this.batch = spriteBatch;
         gameHelper = GameHelper.getInstance();
 
@@ -116,7 +115,7 @@ public class StatusBar implements Disposable{
         gemImage.setPosition(-gemImage.getWidth() / 2, 0);
         gemImage.setAlign(Align.center);
         gemsLabel.setPosition(gemImage.getWidth(), 0);
-        gemsLabel.padTop(5f);
+//        gemsLabel.padTop(5f);
         gemsLabel.align(Align.bottom | Align.right);
 
         //dialog bg
@@ -149,10 +148,15 @@ public class StatusBar implements Disposable{
         table.top();
         table.setFillParent(true);
 
-        table.add(livesGroup).expandX().padTop(15f);
+        if (!partial) {
+            table.add(livesGroup).expandX().padTop(20f);
+        }
         table.add(goldGroup).expandX().padTop(25f);
-        table.add(gemsGroup).expandX().padTop(15f);
-        table.add(pauseButton).align(Align.right).padRight(2f);
+        table.add(gemsGroup).expandX().padTop(25f);
+        if (!partial) {
+            table.add(pauseButton).align(Align.right).padRight(2f);
+        }
+
 
         update();
 

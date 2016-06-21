@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.Random;
+
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 
@@ -27,6 +29,10 @@ public class Ball extends Sprite {
     private PowerUp.Type powerUpType = null;
     private boolean isActive = false;
     private float absSpeed;
+
+    public Ball(World world, float x, float y) {
+        this(world, new Vector2(x, y));
+    }
 
     public Ball(World world, Vector2 position) {
         super(Arkanoid.adjustSize(new Sprite(new Texture(Gdx.files.internal(AssetsHelper.BALL_PART_1)))));
@@ -87,15 +93,18 @@ public class Ball extends Sprite {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x + (b2body.getLinearVelocity().x > 0 ? -difX : difX),
                     b2body.getLinearVelocity().y + (b2body.getLinearVelocity().y > 0 ? difX : -difX) * 1.15f);
             System.out.println("Low Y speed! x: " + velocityX + "y: " + velocityY);
+        } else if (Math.abs(velocityX) < 0.2) {
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.1f,
+                    b2body.getLinearVelocity().y);
         }
 
         //normalizing speed
         if (calcAbsSpeed() < absSpeed * 0.97) {
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.01f, b2body.getLinearVelocity().y * 1.01f);
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.02f, b2body.getLinearVelocity().y * 1.02f);
             System.out.println("Increasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
                     + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
         } else if (calcAbsSpeed() > absSpeed / 0.97) {
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x / 1.01f, b2body.getLinearVelocity().y / 1.01f);
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x / 1.02f, b2body.getLinearVelocity().y / 1.02f);
             System.out.println("Decreasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
                     + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
         }
@@ -117,6 +126,21 @@ public class Ball extends Sprite {
             b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X, DEFAULT_VELOCITY_y), b2body.getWorldCenter(), true);
             absSpeed = calcAbsSpeed();
         }
+    }
+
+    public Ball cloneBall() {
+        float x = b2body.getPosition().x - getWidth() / 2;
+        float y = b2body.getPosition().y - getHeight() / 2;
+        Ball ball = new Ball(world, Arkanoid.unscale(x), Arkanoid.unscale(y));
+        float random = new Random().nextFloat();
+        float xVelocity = b2body.getLinearVelocity().x;
+        float yVelocity = b2body.getLinearVelocity().y;
+        ball.b2body.applyLinearImpulse(new Vector2(-(xVelocity + (xVelocity > 0 ? +random : -random)),
+                        yVelocity + (yVelocity > 0 ? -random : +random)),
+                b2body.getWorldCenter(), true);
+        ball.isActive = true;
+        ball.absSpeed = absSpeed;
+        return ball;
     }
 
     public boolean isBelowYZero() {

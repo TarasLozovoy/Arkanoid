@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="33" tilewidth="24" tileheight="24" nextobjectid="280">
+ <tileset firstgid="1" name="bricks" tilewidth="24" tileheight="24" tilecount="16" columns="16">
+  <image source="../Bricks/new_basic/basic_bricks.png" width="384" height="24"/>
+ </tileset>
+ <layer name="Graphics" width="20" height="33">
+  <data encoding="base64" compression="zlib">
+   eJztktEKgCAMRYVsIBb0/1+bgsIQZte1etqBixB3J1FDcL5kH/LWhXzTurROpI86V/791B3PHo3kIsX+pBlinUocIvn47KzDHZGt3L9yb5KPjH2W+5O6qA+9D85mnHq+R8tVkkpOMKnN9PnqymH+flC6Kxu4OpYux3H+5wZLPQK1
+  </data>
+ </layer>
+ <objectgroup name="powerups">
+  <object id="214" x="0" y="432" width="24" height="24"/>
+  <object id="215" x="456" y="432" width="24" height="24"/>
+  <object id="218" x="288" y="312" width="24" height="24"/>
+  <object id="219" x="384" y="240" width="24" height="24"/>
+  <object id="220" x="72" y="240" width="24" height="24"/>
+  <object id="276" x="408" y="264" width="24" height="24"/>
+  <object id="277" x="48" y="264" width="24" height="24"/>
+  <object id="278" x="24" y="456" width="24" height="24"/>
+  <object id="279" x="432" y="456" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d5">
+  <object id="143" x="360" y="384" width="24" height="24"/>
+  <object id="144" x="360" y="360" width="24" height="24"/>
+  <object id="145" x="360" y="336" width="24" height="24"/>
+  <object id="146" x="360" y="312" width="24" height="24"/>
+  <object id="147" x="360" y="288" width="24" height="24"/>
+  <object id="148" x="360" y="264" width="24" height="24"/>
+  <object id="149" x="360" y="240" width="24" height="24"/>
+  <object id="150" x="360" y="216" width="24" height="24"/>
+  <object id="151" x="384" y="216" width="24" height="24"/>
+  <object id="152" x="408" y="240" width="24" height="24"/>
+  <object id="153" x="360" y="192" width="24" height="24"/>
+  <object id="154" x="336" y="168" width="24" height="24"/>
+  <object id="155" x="312" y="144" width="24" height="24"/>
+  <object id="156" x="288" y="120" width="24" height="24"/>
+  <object id="157" x="264" y="96" width="24" height="24"/>
+  <object id="158" x="240" y="96" width="24" height="24"/>
+  <object id="159" x="216" y="96" width="24" height="24"/>
+  <object id="160" x="192" y="96" width="24" height="24"/>
+  <object id="161" x="168" y="120" width="24" height="24"/>
+  <object id="162" x="144" y="144" width="24" height="24"/>
+  <object id="163" x="120" y="168" width="24" height="24"/>
+  <object id="164" x="96" y="192" width="24" height="24"/>
+  <object id="165" x="72" y="216" width="24" height="24"/>
+  <object id="166" x="48" y="240" width="24" height="24"/>
+  <object id="167" x="96" y="216" width="24" height="24"/>
+  <object id="168" x="120" y="216" width="24" height="24"/>
+  <object id="169" x="144" y="216" width="24" height="24"/>
+  <object id="170" x="168" y="216" width="24" height="24"/>
+  <object id="171" x="192" y="216" width="24" height="24"/>
+  <object id="172" x="216" y="216" width="24" height="24"/>
+  <object id="173" x="240" y="216" width="24" height="24"/>
+  <object id="174" x="264" y="216" width="24" height="24"/>
+  <object id="175" x="288" y="216" width="24" height="24"/>
+  <object id="176" x="312" y="216" width="24" height="24"/>
+  <object id="177" x="336" y="216" width="24" height="24"/>
+  <object id="178" x="96" y="240" width="24" height="24"/>
+  <object id="179" x="96" y="264" width="24" height="24"/>
+  <object id="181" x="96" y="288" width="24" height="24"/>
+  <object id="182" x="96" y="312" width="24" height="24"/>
+  <object id="183" x="96" y="336" width="24" height="24"/>
+  <object id="184" x="96" y="360" width="24" height="24"/>
+  <object id="185" x="96" y="384" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d4">
+  <object id="186" x="144" y="264" width="24" height="24"/>
+  <object id="187" x="168" y="264" width="24" height="24"/>
+  <object id="188" x="192" y="264" width="24" height="24"/>
+  <object id="189" x="216" y="264" width="24" height="24"/>
+  <object id="190" x="216" y="288" width="24" height="24"/>
+  <object id="191" x="216" y="312" width="24" height="24"/>
+  <object id="192" x="216" y="336" width="24" height="24"/>
+  <object id="193" x="216" y="360" width="24" height="24"/>
+  <object id="194" x="216" y="384" width="24" height="24"/>
+  <object id="195" x="192" y="384" width="24" height="24"/>
+  <object id="197" x="168" y="384" width="24" height="24"/>
+  <object id="198" x="144" y="384" width="24" height="24"/>
+  <object id="199" x="144" y="360" width="24" height="24"/>
+  <object id="200" x="144" y="336" width="24" height="24"/>
+  <object id="201" x="144" y="312" width="24" height="24"/>
+  <object id="202" x="144" y="288" width="24" height="24"/>
+  <object id="203" x="264" y="288" width="24" height="24"/>
+  <object id="204" x="288" y="288" width="24" height="24"/>
+  <object id="205" x="312" y="288" width="24" height="24"/>
+  <object id="209" x="312" y="312" width="24" height="24"/>
+  <object id="210" x="312" y="336" width="24" height="24"/>
+  <object id="211" x="288" y="336" width="24" height="24"/>
+  <object id="212" x="264" y="336" width="24" height="24"/>
+  <object id="213" x="264" y="312" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d3">
+  <object id="123" x="0" y="408" width="24" height="24"/>
+  <object id="124" x="24" y="408" width="24" height="24"/>
+  <object id="125" x="48" y="408" width="24" height="24"/>
+  <object id="126" x="72" y="408" width="24" height="24"/>
+  <object id="127" x="96" y="408" width="24" height="24"/>
+  <object id="128" x="120" y="408" width="24" height="24"/>
+  <object id="129" x="144" y="408" width="24" height="24"/>
+  <object id="130" x="168" y="408" width="24" height="24"/>
+  <object id="131" x="192" y="408" width="24" height="24"/>
+  <object id="132" x="216" y="408" width="24" height="24"/>
+  <object id="133" x="240" y="408" width="24" height="24"/>
+  <object id="134" x="264" y="408" width="24" height="24"/>
+  <object id="135" x="288" y="408" width="24" height="24"/>
+  <object id="136" x="312" y="408" width="24" height="24"/>
+  <object id="137" x="336" y="408" width="24" height="24"/>
+  <object id="138" x="360" y="408" width="24" height="24"/>
+  <object id="139" x="384" y="408" width="24" height="24"/>
+  <object id="140" x="408" y="408" width="24" height="24"/>
+  <object id="141" x="432" y="408" width="24" height="24"/>
+  <object id="142" x="456" y="408" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d2"/>
+ <objectgroup name="d1">
+  <object id="261" x="24" y="432" width="24" height="24"/>
+  <object id="262" x="48" y="432" width="24" height="24"/>
+  <object id="264" x="408" y="432" width="24" height="24"/>
+  <object id="265" x="432" y="432" width="24" height="24"/>
+  <object id="266" x="456" y="456" width="24" height="24"/>
+  <object id="267" x="456" y="480" width="24" height="24"/>
+  <object id="268" x="0" y="456" width="24" height="24"/>
+  <object id="269" x="0" y="480" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="wall"/>
+ <objectgroup name="slow_down"/>
+ <objectgroup name="speed_up">
+  <object id="274" x="360" y="432" width="24" height="24"/>
+  <object id="275" x="96" y="432" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="half_wall">
+  <object id="235" x="120" y="432" width="24" height="24"/>
+  <object id="236" x="144" y="432" width="24" height="24"/>
+  <object id="238" x="168" y="432" width="24" height="24"/>
+  <object id="240" x="192" y="432" width="24" height="24"/>
+  <object id="241" x="216" y="432" width="24" height="24"/>
+  <object id="242" x="240" y="432" width="24" height="24"/>
+  <object id="243" x="264" y="432" width="24" height="24"/>
+  <object id="244" x="288" y="432" width="24" height="24"/>
+  <object id="245" x="312" y="432" width="24" height="24"/>
+  <object id="246" x="336" y="432" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="ice_block"/>
+ <objectgroup name="TNT"/>
+ <objectgroup name="oops">
+  <object id="257" x="72" y="432" width="24" height="24"/>
+  <object id="260" x="384" y="432" width="24" height="24"/>
+ </objectgroup>
+</map>

@@ -9,6 +9,7 @@ public class AssetsHelper {
     public static final String DIAMOND = "gem.png";
     public static final String BLANK = "blank.png";
     public static final String MENU_BUTTON = "menu_button.png";
+    public static final String PAUSE_BUTTON = "pause_button30.png";
 
     //power ups
     public static final String POWER_UP_BOMB = "PowerUps/bomb.png";
@@ -24,6 +25,7 @@ public class AssetsHelper {
     public static final String STATUS_BAR_BLACKOUT_BACKGROUND = "statusBar_bg.png";
     public static final String MENU_BACKGROUND = "menu_bg.png";
     public static final String PART_1_BACKGROUND = "basic_bg_lighter.png";
+    public static final String DIALOG_BG = "dialog_bg.png";
 
     //fonts
     public static final String FONT_DOCTOR_JEKYLL = "Fonts/DoctorJekyllNF.ttf";

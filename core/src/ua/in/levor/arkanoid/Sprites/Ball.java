@@ -70,7 +70,7 @@ public class Ball extends Sprite {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x * -1, b2body.getLinearVelocity().y);
         }
 
-        if (y + getHeight()> Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30))) {
+        if (y + getHeight() > Arkanoid.scale(Arkanoid.HEIGHT - 30 - 2)) {
             y = Arkanoid.scale(Arkanoid.HEIGHT - (Arkanoid.HEIGHT / 30)) - getHeight();
             b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y * -1);
         }

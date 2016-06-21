@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="33" tilewidth="24" tileheight="24" nextobjectid="163">
+ <tileset firstgid="1" name="bricks" tilewidth="24" tileheight="24" tilecount="16" columns="16">
+  <image source="../Bricks/new_basic/basic_bricks.png" width="384" height="24"/>
+ </tileset>
+ <layer name="Graphics" width="20" height="33">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjAJMwEMhjQy4gJgNSjPj4OMSh/HRATeF9CgYBaNgFIwC6gEADWkBNw==
+  </data>
+ </layer>
+ <objectgroup name="powerups">
+  <object id="159" x="72" y="336" width="24" height="24"/>
+  <object id="160" x="168" y="336" width="24" height="24"/>
+  <object id="161" x="312" y="336" width="24" height="24"/>
+  <object id="162" x="408" y="336" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d5"/>
+ <objectgroup name="d4"/>
+ <objectgroup name="d3">
+  <object id="154" x="360" y="336" width="24" height="24"/>
+  <object id="156" x="264" y="336" width="24" height="24"/>
+  <object id="157" x="216" y="336" width="24" height="24"/>
+  <object id="158" x="120" y="336" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="d2"/>
+ <objectgroup name="d1">
+  <object id="122" x="48" y="336" width="24" height="24"/>
+  <object id="127" x="72" y="312" width="24" height="24"/>
+  <object id="128" x="96" y="336" width="24" height="24"/>
+  <object id="129" x="72" y="360" width="24" height="24"/>
+  <object id="130" x="120" y="360" width="24" height="24"/>
+  <object id="131" x="168" y="360" width="24" height="24"/>
+  <object id="132" x="216" y="360" width="24" height="24"/>
+  <object id="133" x="264" y="360" width="24" height="24"/>
+  <object id="134" x="312" y="360" width="24" height="24"/>
+  <object id="135" x="360" y="360" width="24" height="24"/>
+  <object id="136" x="408" y="360" width="24" height="24"/>
+  <object id="137" x="120" y="312" width="24" height="24"/>
+  <object id="138" x="144" y="336" width="24" height="24"/>
+  <object id="139" x="168" y="312" width="24" height="24"/>
+  <object id="140" x="192" y="336" width="24" height="24"/>
+  <object id="144" x="216" y="312" width="24" height="24"/>
+  <object id="145" x="240" y="336" width="24" height="24"/>
+  <object id="146" x="264" y="312" width="24" height="24"/>
+  <object id="147" x="288" y="336" width="24" height="24"/>
+  <object id="148" x="312" y="312" width="24" height="24"/>
+  <object id="149" x="336" y="336" width="24" height="24"/>
+  <object id="150" x="360" y="312" width="24" height="24"/>
+  <object id="151" x="408" y="312" width="24" height="24"/>
+  <object id="152" x="384" y="336" width="24" height="24"/>
+  <object id="153" x="432" y="336" width="24" height="24"/>
+ </objectgroup>
+ <objectgroup name="undestroyable wall"/>
+ <objectgroup name="slow_down"/>
+ <objectgroup name="speed_up"/>
+ <objectgroup name="half_wall"/>
+ <objectgroup name="ice_block"/>
+ <objectgroup name="TNT"/>
+ <objectgroup name="oops"/>
+</map>

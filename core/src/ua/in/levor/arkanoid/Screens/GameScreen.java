@@ -44,7 +44,7 @@ public class GameScreen implements DefaultScreen {
     private Array<Ball> balls = new Array<Ball>();
     private Platform platform;
     private Array<PowerUp> powerUps = new Array<PowerUp>();
-    public Sprite statusBarBg;
+//    public Sprite statusBarBg;
 
     private Sprite bg;
     private int currentLevel;
@@ -82,11 +82,11 @@ public class GameScreen implements DefaultScreen {
 
         touchPosition = new Vector3();
         bg = new Sprite(new Texture(Gdx.files.internal(AssetsHelper.PART_1_BACKGROUND)));
-        statusBarBg = new Sprite(new Texture(Gdx.files.internal(AssetsHelper.STATUS_BAR_BLACKOUT_BACKGROUND)));
+//        statusBarBg = new Sprite(new Texture(Gdx.files.internal(AssetsHelper.STATUS_BAR_BLACKOUT_BACKGROUND)));
         activePowerUpBlank = new Texture(Gdx.files.internal(AssetsHelper.BLANK));
         activePowerUp = new Sprite(activePowerUpBlank);
         Arkanoid.adjustSize(bg);
-        Arkanoid.adjustSize(statusBarBg);
+//        Arkanoid.adjustSize(statusBarBg);
         Arkanoid.adjustSize(activePowerUp);
 
         mapLoader = new TmxMapLoader();
@@ -180,7 +180,7 @@ public class GameScreen implements DefaultScreen {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         bg.draw(game.batch);
-        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
+//        game.batch.draw(statusBarBg, 0, -0.45f, statusBarBg.getWidth(), statusBarBg.getHeight());
         activePowerUp.draw(game.batch);
         for (Ball ball : balls) {
             ball.draw(game.batch);
@@ -196,22 +196,13 @@ public class GameScreen implements DefaultScreen {
 //        b2dr.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(statusBar.statusStage.getCamera().combined);
+        statusBar.draw();
         statusBar.statusStage.draw();
 
-        if (gameState == GameState.PAUSED) {
-            Gdx.input.setInputProcessor(statusBar.pauseStage);
-            statusBar.pauseStage.act();
-            statusBar.pauseStage.draw();
-        } else if (gameState == GameState.LEVEL_CLEARED) {
-            Gdx.input.setInputProcessor(statusBar.levelClearedStage);
-            statusBar.levelClearedStage.act();
-            statusBar.levelClearedStage.draw();
-        } else if (gameState == GameState.GAME_OVER) {
-            Gdx.input.setInputProcessor(statusBar.gameOverStage);
-            statusBar.gameOverStage.act();
-            statusBar.gameOverStage.draw();
-        } else if (gameState == GameState.RUNNING) {
+        if (gameState == GameState.RUNNING) {
             Gdx.input.setInputProcessor(statusBar.statusStage);
+        } else {
+            statusBar.showDialog(gameState);
         }
     }
 

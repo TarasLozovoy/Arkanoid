@@ -46,6 +46,9 @@ public class StatusBar implements Disposable{
     private Texture ballSprite;
     private Texture goldSprite;
     private Texture gemsSprite;
+    private Texture pauseButtonSprite;
+    private Texture dialogBGSprite;
+    private Texture statusBarBg;
 
     private TextButton goldLabel;
     private TextButton gemsLabel;
@@ -58,6 +61,8 @@ public class StatusBar implements Disposable{
         viewport = new StretchViewport(Arkanoid.WIDTH, Arkanoid.HEIGHT, new OrthographicCamera());
         statusStage = new Stage(viewport, spriteBatch);
         Gdx.input.setInputProcessor(statusStage);
+
+        statusBarBg = new Texture(Gdx.files.internal(AssetsHelper.STATUS_BAR_BLACKOUT_BACKGROUND));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fonts/DoctorJekyllNF.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -93,7 +98,7 @@ public class StatusBar implements Disposable{
         goldImg.setPosition(-goldImg.getWidth() / 2, 0);
         goldImg.setAlign(Align.center);
         goldLabel.setPosition(goldImg.getWidth(), 0);
-        goldLabel.padTop(5f);
+//        goldLabel.padTop(5f);
         goldLabel.align(Align.bottom | Align.right);
 
         //gems
@@ -114,32 +119,77 @@ public class StatusBar implements Disposable{
         gemsLabel.padTop(5f);
         gemsLabel.align(Align.bottom | Align.right);
 
+        //dialog bg
+        dialogBGSprite = new Texture(Gdx.files.internal(AssetsHelper.DIALOG_BG));
+
+        //pause button
+        pauseButtonSprite = new Texture(Gdx.files.internal(AssetsHelper.PAUSE_BUTTON));
+        Skin skin = new Skin();
         parameter.size = 25;
+        parameter.color = Color.TAN;
+        BitmapFont font = generator.generateFont(parameter);
+
+        skin.add("button", pauseButtonSprite);
         textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = generator.generateFont(parameter);
-        textButtonStyle.fontColor = Color.CHARTREUSE;
-        TextButton menu = new TextButton("Pause", textButtonStyle);
-        menu.addListener(new ChangeListener() {
+        textButtonStyle.up = skin.getDrawable("button");
+        textButtonStyle.over = skin.newDrawable("button", Color.LIGHT_GRAY);
+
+        textButtonStyle.font = font;
+
+        TextButton pauseButton = new TextButton("", textButtonStyle);
+        pauseButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Arkanoid gameInstance = ((Arkanoid) Gdx.app.getApplicationListener());
                 gameInstance.getCurrentScreen().setState(DefaultScreen.GameState.PAUSED);
             }
         });
 
+
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
         table.add(livesGroup).expandX().padTop(15f);
-        table.add(goldGroup).expandX().padTop(15f);
+        table.add(goldGroup).expandX().padTop(25f);
         table.add(gemsGroup).expandX().padTop(15f);
-        table.add(menu).align(Align.right).padRight(2f);
+        table.add(pauseButton).align(Align.right).padRight(2f);
 
         update();
 
         statusStage.addActor(table);
 
         generator.dispose();
+    }
+
+    public void draw() {
+        batch.begin();
+        batch.draw(statusBarBg, 0, Arkanoid.HEIGHT - statusBarBg.getHeight());
+        batch.end();
+    }
+
+    public void showDialog(DefaultScreen.GameState state) {
+        if (state != DefaultScreen.GameState.RUNNING) {
+            batch.begin();
+            batch.draw(dialogBGSprite, 0, 0);
+            batch.end();
+            switch (state) {
+                case PAUSED:
+                    Gdx.input.setInputProcessor(pauseStage);
+                    pauseStage.act();
+                    pauseStage.draw();
+                    break;
+                case LEVEL_CLEARED:
+                    Gdx.input.setInputProcessor(levelClearedStage);
+                    levelClearedStage.act();
+                    levelClearedStage.draw();
+                    break;
+                case GAME_OVER:
+                    Gdx.input.setInputProcessor(gameOverStage);
+                    gameOverStage.act();
+                    gameOverStage.draw();
+                    break;
+            }
+        }
     }
 
     public void initPauseStage() {
@@ -328,8 +378,13 @@ public class StatusBar implements Disposable{
     @Override
     public void dispose() {
         statusStage.dispose();
+        gameOverStage.dispose();
+        levelClearedStage.dispose();
+        pauseStage.dispose();
         goldSprite.dispose();
         gemsSprite.dispose();
         ballSprite.dispose();
+        dialogBGSprite.dispose();
+        statusBarBg.dispose();
     }
 }

@@ -81,11 +81,6 @@ public class B2WorldCreator{
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.SLOW_DOWN));
         }
 
-        for (MapObject object : map.getLayers().get(DURABILITY_1_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject)object).getRectangle();
-            brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.DURABILITY1));
-        }
-
         for (MapObject object : map.getLayers().get(HALF_WALL_BRICKS_LAYER).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             brickHelper.addBrick(new Brick(world, map, rect, Brick.Type.HALF_WALL));

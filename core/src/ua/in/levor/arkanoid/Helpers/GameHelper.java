@@ -27,7 +27,7 @@ public class GameHelper {
     }
 
     public void addGold(long value) {
-        gold += value;
+        gold += (value * SkillsHelper.getInstance().getGoldMultiplier());
     }
 
     public int getGems() {

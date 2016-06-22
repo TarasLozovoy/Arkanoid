@@ -48,6 +48,8 @@ public class BrickHelper {
         return inRadius;
     }
 
+
+
     public void handleOopsBlockHit() {
         oopsBlockTimer = 7.5f;
         oopsActive = true;

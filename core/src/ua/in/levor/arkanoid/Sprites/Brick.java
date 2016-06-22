@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
@@ -33,6 +34,8 @@ public class Brick {
 
     private Type type;
     private boolean destroy = false;
+
+    private int freezeChainID = -2;
 
     public Brick(World world, TiledMap map, Rectangle bounds, Type type) {
         this.world = world;
@@ -72,18 +75,50 @@ public class Brick {
         return layer.getCell((int) Arkanoid.unscale(body.getPosition().x) / TILE_SIZE, (int) Arkanoid.unscale(body.getPosition().y) / TILE_SIZE);
     }
 
-    public void frozeBrick() {
-        getCell().setTile(tileSet.getTile(Type.ICE.getIdInMap()));
-        type = Type.ICE;
+    public void frozeBrick(int freezeDeep, int freezeChainID) {
+        if (isReadyToDestroy()) return;
+        if (type == Type.ICE && freezeChainID != this.freezeChainID) {
+            destroy();
+        } else if (type == Type.DURABILITY1 && freezeChainID == -1){
+            destroy();
+        } else {
+            getCell().setTile(tileSet.getTile(Type.ICE.getIdInMap()));
+            type = Type.ICE;
+        }
+
+        if (freezeChainID < 0) {
+            this.freezeChainID = new Random().nextInt(1000000);
+        }
+
+        if (freezeDeep < 1) return;
+        Random random = new Random();
+        float freezeProbability = SkillsHelper.getInstance().getFreezeBallFreezeNeighbourChance();
+        if (freezeDeep <= SkillsHelper.getInstance().getFreezeBallFreezeChainLength() -1) {
+            freezeProbability += SkillsHelper.getInstance().getFreezeBallFreezeChainProbabilityAddValue();
+        }
+        if (random.nextFloat() < freezeProbability) {
+            Array<Brick> neighbourBricks = new Array<Brick>();
+            for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(40, body.getPosition())) {
+                neighbourBricks.add(b);
+            }
+            Brick brickToFroze = neighbourBricks.get(random.nextInt(neighbourBricks.size));
+            if (brickToFroze.getType() != Type.POWER) {
+                if (brickToFroze.getType() != Type.ICE) {
+                    brickToFroze.freezeChainID = this.freezeChainID;
+                }
+                brickToFroze.frozeBrick(freezeDeep - 1, this.freezeChainID);
+            }
+        }
     }
 
     public void handleHit() {
         if (destroy) return;
-        spawnCoin();
+        checkSkills();
         switch (type) {
             case POWER:
                 destroy();
-                PowerUpHelper.getInstance().requestNewPowerUp(body.getPosition());
+                spawnNewPowerUp();
+                checkGemSpawn();
                 break;
             case RED:
                 getCell().setTile(tileSet.getTile(Type.GRAY.getIdInMap()));
@@ -121,12 +156,43 @@ public class Brick {
             default:
                 throw new RuntimeException("Unexpected block type!");
         }
+
+        if (!destroy) {
+            checkForDestroyOnHitSkill();
+        }
     }
 
-    private void spawnCoin() {
-        if (new Random().nextInt(100) + 1 < (int)SkillsHelper.getInstance().getGoldFromBrickHitChance() * 100) {
+    private void checkForDestroyOnHitSkill() {
+        Random random = new Random();
+        if (random.nextFloat() < SkillsHelper.getInstance().getDestroyBrickOnHitChance()) {
+            destroy();
+        }
+    }
+
+    private void checkSkills() {
+        Random random = new Random();
+        if (random.nextFloat() < SkillsHelper.getInstance().getGoldFromBrickHitChance()) {
             GameHelper.getInstance().addGold(1);
         }
+        if (random.nextFloat() < SkillsHelper.getInstance().getDetonationChance()) {
+            for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(SkillsHelper.getInstance().getDetonationRadius(), body.getPosition())) {
+                b.handleHit();
+            }
+        }
+        if (random.nextFloat() < SkillsHelper.getInstance().getPowerUpDropOnBrickHitChance()) {
+            spawnNewPowerUp();
+        }
+    }
+
+    private void checkGemSpawn() {
+        Random random = new Random();
+        if (random.nextFloat() < SkillsHelper.getInstance().getGemFromPowerUpBrickHitChance()) {
+            GameHelper.getInstance().addGems(1);
+        }
+    }
+
+    private void spawnNewPowerUp() {
+        PowerUpHelper.getInstance().requestNewPowerUp(body.getPosition());
     }
 
     public void destroy() {

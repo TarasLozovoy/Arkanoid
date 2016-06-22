@@ -23,6 +23,7 @@ import ua.in.levor.arkanoid.Helpers.AssetsHelper;
 import ua.in.levor.arkanoid.Helpers.BrickHelper;
 import ua.in.levor.arkanoid.Helpers.GameHelper;
 import ua.in.levor.arkanoid.Helpers.PowerUpHelper;
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
 import ua.in.levor.arkanoid.Sprites.Platform;
@@ -70,7 +71,7 @@ public class GameScreen implements DefaultScreen {
         this.game = game;
         this.currentLevel = level;
         BrickHelper.getInstance().clear();
-        GameHelper.getInstance().setLives(2);
+        GameHelper.getInstance().setLives(1 + SkillsHelper.getInstance().getAdditionalLives());
         camera = new OrthographicCamera();
         gamePort = new StretchViewport(Arkanoid.WIDTH / Arkanoid.PPM, Arkanoid.HEIGHT / Arkanoid.PPM, camera);
 
@@ -245,10 +246,7 @@ public class GameScreen implements DefaultScreen {
 
     @Override
     public void pause() {
-        DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
-//        if (gameState == GameState.RUNNING) {
-//            gameState = GameState.PAUSED;
-//        }
+        saveDataToDB();
     }
 
     @Override
@@ -258,7 +256,12 @@ public class GameScreen implements DefaultScreen {
 
     @Override
     public void hide() {
+        saveDataToDB();
+    }
+
+    public void saveDataToDB() {
         DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
+        DBHelper.getInstance().updateGems(GameHelper.getInstance().getGems());
     }
 
     private void updateBricks(float dt) {
@@ -272,6 +275,8 @@ public class GameScreen implements DefaultScreen {
         for (Brick br : destroyArray) {
             BrickHelper.getInstance().getAllBricks().removeValue(br, true);
         }
+
+        destroyArray.clear();
 
         //checking for oops block activation
         if (BrickHelper.getInstance().isOopsActive()) {
@@ -289,7 +294,7 @@ public class GameScreen implements DefaultScreen {
     private void levelCleared() {
         gameState = GameState.LEVEL_CLEARED;
         GameHelper.getInstance().addGold(100);
-        DBHelper.getInstance().updateGold(GameHelper.getInstance().getGold());
+        saveDataToDB();
     }
 
     private void updatePowerUps(float dt) {
@@ -309,7 +314,7 @@ public class GameScreen implements DefaultScreen {
                 if (!handleNewPowerUp(powerUp.getType())) {
                     powerUpType = powerUp.getType();
                     showActivePowerUp(powerUpTimer > 0);
-                    powerUpTimer = 20;
+                    powerUpTimer = powerUpType.getDuration();
                 }
             } else if (powerUp.b2body.getPosition().y < 0) {
                 toBeDestroyed.add(powerUp);
@@ -322,7 +327,7 @@ public class GameScreen implements DefaultScreen {
         }
 
         if (powerUpTimer > 0) {
-            System.out.println(powerUpTimer);
+//            System.out.println(powerUpTimer);
             powerUpTimer -= dt;
             for (Ball ball : balls) {
                 ball.setPowerUp(powerUpType);
@@ -363,7 +368,7 @@ public class GameScreen implements DefaultScreen {
             Sprite sprite = new Sprite(powerUpType.getTexture());
             Arkanoid.adjustSize(sprite);
             activePowerUp.set(sprite);
-            activePowerUp.setPosition(0, Arkanoid.scale(Arkanoid.HEIGHT) - activePowerUp.getHeight());
+            activePowerUp.setPosition(0, Arkanoid.scale(Arkanoid.HEIGHT) - (activePowerUp.getHeight() * 1.125f));
             showingPowerUp = true;
         }
     }
@@ -389,5 +394,6 @@ public class GameScreen implements DefaultScreen {
         }
         platform.dispose();
         bg.getTexture().dispose();
+        world.dispose();
     }
 }

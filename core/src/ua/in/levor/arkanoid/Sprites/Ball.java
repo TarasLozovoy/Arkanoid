@@ -89,8 +89,6 @@ public class Ball extends Sprite {
 
         float velocityX = Math.abs(b2body.getLinearVelocity().x);
         float velocityY = Math.abs(b2body.getLinearVelocity().y);
-        System.out.println(" x: " + velocityX + "y: " + velocityY);
-        System.out.println(" xpos: " + x + "ypos: " + y);
 
         if (Math.abs(velocityY/(velocityX + velocityY)) < 0.15) {
             float difX = velocityX * 0.01f;
@@ -111,6 +109,12 @@ public class Ball extends Sprite {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x / 1.02f, b2body.getLinearVelocity().y / 1.02f);
             System.out.println("Decreasing speed! x: " + b2body.getLinearVelocity().x + "y: " + b2body.getLinearVelocity().y
                     + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
+        }
+
+        if (Math.abs(b2body.getLinearVelocity().x) < 0.1f) {
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x > 0 ? 0.1f : - 0/1f, b2body.getLinearVelocity().y);
+        } else if (Math.abs(b2body.getLinearVelocity().y) < 0.1f) {
+            b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y > 0 ? 0.1f : - 0/1f);
         }
 
         setPosition(x, y);

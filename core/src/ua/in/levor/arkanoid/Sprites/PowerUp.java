@@ -10,15 +10,16 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 
 public class PowerUp extends Sprite {
     public static final int WIDTH = 24;
-    public static final int NUMBER_OF_POWERUPS_AVAILABLE = 8;
     public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
@@ -35,40 +36,25 @@ public class PowerUp extends Sprite {
 
         setBounds(0, 0, Arkanoid.scale(WIDTH), Arkanoid.scale(WIDTH));
 
-        switch (new Random().nextInt(NUMBER_OF_POWERUPS_AVAILABLE)) {
-            case 0:
-                type = Type.BOMB;
-                set(Arkanoid.adjustSize(new Sprite(Type.BOMB.getTexture())));
+        Array<Type> activePowerUps = new Array<Type>();
+        for (Type type : Type.values()) {
+            if (type.isActive()) {
+                activePowerUps.add(type);
+            }
+        }
+
+        int totalProbability = 0;
+        for (Type type : activePowerUps) {
+            totalProbability += type.getProbability();
+        }
+        int rand = new Random().nextInt(totalProbability);
+        for (Type type : activePowerUps) {
+            totalProbability -= type.getProbability();
+            if (totalProbability <= rand) {
+                this.type = type;
+                set(Arkanoid.adjustSize(new Sprite(type.getTexture())));
                 break;
-            case 1:
-                type = Type.STEEL_BALL;
-                set(Arkanoid.adjustSize(new Sprite(Type.STEEL_BALL.getTexture())));
-                break;
-            case 2:
-                type = Type.FIRE_BALL;
-                set(Arkanoid.adjustSize(new Sprite(Type.FIRE_BALL.getTexture())));
-                break;
-            case 3:
-                type = Type.MAGNET;
-                // TODO: 6/8/16 add action
-                set(Arkanoid.adjustSize(new Sprite(Type.MAGNET.getTexture())));
-                break;
-            case 4:
-                type = Type.SLOW;
-                set(Arkanoid.adjustSize(new Sprite(Type.SLOW.getTexture())));
-                break;
-            case 5:
-                type = Type.FREEZE;
-                set(Arkanoid.adjustSize(new Sprite(Type.FREEZE.getTexture())));
-                break;
-            case 6:
-                type = Type.SPEED_UP;
-                set(Arkanoid.adjustSize(new Sprite(Type.SPEED_UP.getTexture())));
-                break;
-            case 7:
-                type = Type.ADD_BALL;
-                set(Arkanoid.adjustSize(new Sprite(Type.ADD_BALL.getTexture())));
-                break;
+            }
         }
 
         definePowerUp();
@@ -135,6 +121,55 @@ public class PowerUp extends Sprite {
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_ADDITIONAL_BALL));
             }
             return null;
+        }
+
+        public int getDuration() {
+            switch (this) {
+                case STEEL_BALL:
+                    return SkillsHelper.getInstance().getSteelBallDuration();
+                case BOMB:
+                case FIRE_BALL:
+                case MAGNET:
+                case SLOW:
+                case FREEZE:
+                    return SkillsHelper.getInstance().getFreezeBallDuration();
+                case SPEED_UP:
+                case ADD_BALL:
+                default:
+                    return 20;
+            }
+        }
+
+        public boolean isActive() {
+            switch (this) {
+                case STEEL_BALL:
+                    return SkillsHelper.getInstance().getSteelBallLevel() == 1;
+                case BOMB:
+                    return false;
+                case FIRE_BALL:
+                    return false;
+                case MAGNET:
+                    return false;
+                case SLOW:
+                    return false;
+                case FREEZE:
+                    return SkillsHelper.getInstance().getFreezeBallLevel() == 1;
+                case SPEED_UP:
+                    return false;
+                case ADD_BALL:
+                    return false;
+                default:
+                    throw new RuntimeException("Unsupported type");
+            }
+        }
+
+        public int getProbability() {
+            switch (this) {
+                case STEEL_BALL:
+                    return 10;
+                default:
+                    return 10;
+            }
         }
     }
 }

@@ -9,6 +9,9 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 import ua.in.levor.arkanoid.Sprites.Ball;
 import ua.in.levor.arkanoid.Sprites.Brick;
 import ua.in.levor.arkanoid.Helpers.BrickHelper;
@@ -28,6 +31,8 @@ public class WorldContactListener implements ContactListener {
                 Brick brick = ((Brick)object.getUserData());
                 Ball ballObj = ((Ball)ball.getUserData());
 
+                Random random = new Random();
+
                 WorldManifold manifold = contact.getWorldManifold();
                 Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
 
@@ -42,13 +47,21 @@ public class WorldContactListener implements ContactListener {
                 } else if (ballObj.getPowerUpType() == PowerUp.Type.STEEL_BALL) {
                     brick.handleHit();
                     brick.handleHit();
+                    if (random.nextFloat() < SkillsHelper.getInstance().getSteelBallPunchThroughChance()) {
+                        Array<Brick> neighbourBricks = new Array<Brick>();
+                        for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(40, intersection)) {
+                            neighbourBricks.add(b);
+                        }
+                        neighbourBricks.get(random.nextInt(neighbourBricks.size)).handleHit();
+                    }
                 } else if (ballObj.getPowerUpType() == PowerUp.Type.FIRE_BALL) {
                     brick.handleHit();
                     brick.destroy();
-                } else if (ballObj.getPowerUpType() == PowerUp.Type.FREEZE && brick.getType() != Brick.Type.ICE
+                } else if (ballObj.getPowerUpType() == PowerUp.Type.FREEZE
                         && brick.getType() != Brick.Type.POWER
-                        && brick.getType() != Brick.Type.OOPS) {
-                    brick.frozeBrick();
+                        && brick.getType() != Brick.Type.OOPS
+                        && brick.getType() != Brick.Type.TNT) {
+                    brick.frozeBrick(SkillsHelper.getInstance().getFreezeBallFreezeChainLength(), -1);
                 } else {
                     brick.handleHit();
                 }
@@ -59,7 +72,11 @@ public class WorldContactListener implements ContactListener {
                     ballObj.changeSpeed(0.9f);
                 }
                 else if (brick.getType() == Brick.Type.OOPS) {
-                    BrickHelper.getInstance().handleOopsBlockHit();
+                    if (random.nextFloat() > SkillsHelper.getInstance().getDeactivateOopsBlockLevelChance()) {
+                        BrickHelper.getInstance().handleOopsBlockHit();
+                    } else {
+                        // TODO: 6/22/16 add sound of deactivated oops block
+                    }
                 }
             }
         }

@@ -65,14 +65,32 @@ public class SkillsHelper {
     private int freezeBallFreezeChainLengthLevel;
     private static int FREEZE_BALL_FREEZE_CHAIN_LENGTH_MULTIPLIER = 1;
 
+    //speed up
+    private int speedUpLevel;
+
+    private int speedUpRatioLevel;
+    private static float SPEED_UP_RATIO_MULTIPLIER = 0.01f;
+
+    //slow down
+    private int slowDownLevel;
+
+    private int slowDownRatioLevel;
+    private static float SLOW_DOWN_RATIO_MULTIPLIER = 0.01f;
+
+    //magnet
+    private int magnetLevel;
+
+    private int magnetDurationLevel;
+    private static int MAGNET_DURATION_MULTIPLIER = 1;
+
     public void init(){
         // TODO: 6/3/16 init from DB
         goldFromBrickHitLevel = 0;
         gemFromPowerUpBrickHitLevel = 0;
         goldMultiplierLevel = 0;
         destroyBrickOnHitLevel = 0;
-        detonationLevel = 20;
-        detonationRadiusLevel = 10;
+        detonationLevel = 0;
+        detonationRadiusLevel = 0;
         additionalLifeLevel = 0;
         powerUpDropOnBrickHitLevel = 0;
         deactivateOopsBrickLevel = 0;
@@ -83,11 +101,23 @@ public class SkillsHelper {
         steelBallPunchNeighbourLevel = 0;
 
         //freeze ball
-        freezeBallLevel = 1;
+        freezeBallLevel = 0;
         freezeBallDurationLevel = 0;
         freezeBallFreezeNeighbourLevel = 0;
         freezeBallFreezeChainProbabilityLevel = 0;
         freezeBallFreezeChainLengthLevel = 0;
+
+        //speed up
+        speedUpLevel = 0;
+        speedUpRatioLevel = 0;
+
+        //slow down
+        slowDownLevel = 0;
+        slowDownRatioLevel = 0;
+
+        //magnet
+        magnetLevel = 1;
+        magnetDurationLevel = 20;
     }
 
     public float getGoldFromBrickHitChance() {
@@ -143,7 +173,6 @@ public class SkillsHelper {
     }
 
     //freeze ball
-
     public int getFreezeBallLevel() {
         return freezeBallLevel;
     }
@@ -162,5 +191,33 @@ public class SkillsHelper {
 
     public int getFreezeBallFreezeChainLength() {
         return 5 + freezeBallFreezeChainLengthLevel * FREEZE_BALL_FREEZE_CHAIN_LENGTH_MULTIPLIER;
+    }
+
+    //speed up
+    public int getSpeedUpLevel() {
+        return speedUpLevel;
+    }
+
+    public float getSpeedUpRatio() {
+        System.out.println(speedUpRatioLevel * SPEED_UP_RATIO_MULTIPLIER);
+        return 1.1f + speedUpRatioLevel * SPEED_UP_RATIO_MULTIPLIER;
+    }
+
+    //slow down
+    public int getSlowDownLevel() {
+        return slowDownLevel;
+    }
+
+    public float getSLowDownRatio() {
+        return 0.9f - slowDownRatioLevel * SLOW_DOWN_RATIO_MULTIPLIER;
+    }
+
+    //magnet
+    public int getMagnetLevel() {
+        return magnetLevel;
+    }
+
+    public int getMagnetDuration() {
+        return 10 + magnetDurationLevel * MAGNET_DURATION_MULTIPLIER;
     }
 }

@@ -27,14 +27,17 @@ public class WorldContactListener implements ContactListener {
                 fixA.getUserData() != null && Ball.class.isAssignableFrom(fixA.getUserData().getClass())) {
             Fixture ball = (fixA.getUserData() != null && Ball.class.isAssignableFrom(fixA.getUserData().getClass())) ? fixA : fixB;
             Fixture object = ball == fixA ? fixB : fixA;
+
+            Ball ballObj = ((Ball)ball.getUserData());
+            WorldManifold manifold = contact.getWorldManifold();
+            if (manifold == null || manifold.getNumberOfContactPoints() < 1) return;
+            Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
+
+            //ball - brick
             if (object.getUserData() != null && Brick.class.isAssignableFrom(object.getUserData().getClass())) {
                 Brick brick = ((Brick)object.getUserData());
-                Ball ballObj = ((Ball)ball.getUserData());
 
                 Random random = new Random();
-
-                WorldManifold manifold = contact.getWorldManifold();
-                Vector2 intersection = manifold.getPoints()[manifold.getNumberOfContactPoints() - 1];
 
                 boolean wallHit = brick.getType() == Brick.Type.HALF_WALL && intersection.y < brick.getBody().getPosition().y
                         || brick.getType() == Brick.Type.WALL;
@@ -78,6 +81,14 @@ public class WorldContactListener implements ContactListener {
                         // TODO: 6/22/16 add sound of deactivated oops block
                     }
                 }
+            } else if (object.getUserData() != null && Platform.class.isAssignableFrom(object.getUserData().getClass())) {
+                //ball - platform
+                Platform platform = (Platform) object.getUserData();
+                if (ballObj.getPowerUpType() == PowerUp.Type.MAGNET) {
+                    ballObj.setIsActive(false);
+                    ballObj.b2body.setLinearVelocity(0, 0);
+                    ballObj.nonActiveBallXDiff = intersection.x - (platform.b2body.getPosition().x + platform.getWidth() / 2);
+                }
             }
         }
         //powerUp - platform
@@ -89,8 +100,6 @@ public class WorldContactListener implements ContactListener {
                 ((PowerUp) powerUp.getUserData()).readyToUse();
             }
         }
-
-
     }
 
     @Override

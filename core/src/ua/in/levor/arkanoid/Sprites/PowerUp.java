@@ -99,7 +99,7 @@ public class PowerUp extends Sprite {
     }
 
     public enum Type {
-        BOMB, STEEL_BALL, FIRE_BALL, MAGNET, SLOW, FREEZE, SPEED_UP, ADD_BALL;
+        BOMB, STEEL_BALL, FIRE_BALL, MAGNET, SLOW_DOWN, FREEZE, SPEED_UP, ADD_BALL;
 
         public Texture getTexture() {
             switch (this) {
@@ -111,7 +111,7 @@ public class PowerUp extends Sprite {
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FIRE_BALL));
                 case MAGNET:
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_MAGNET));
-                case SLOW:
+                case SLOW_DOWN:
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_SLOW));
                 case FREEZE:
                     return new Texture(Gdx.files.internal(AssetsHelper.POWER_UP_FREEZE));
@@ -130,11 +130,9 @@ public class PowerUp extends Sprite {
                 case BOMB:
                 case FIRE_BALL:
                 case MAGNET:
-                case SLOW:
+                    return SkillsHelper.getInstance().getMagnetDuration();
                 case FREEZE:
                     return SkillsHelper.getInstance().getFreezeBallDuration();
-                case SPEED_UP:
-                case ADD_BALL:
                 default:
                     return 20;
             }
@@ -149,13 +147,13 @@ public class PowerUp extends Sprite {
                 case FIRE_BALL:
                     return false;
                 case MAGNET:
-                    return false;
-                case SLOW:
-                    return false;
+                    return SkillsHelper.getInstance().getMagnetLevel() == 1;
+                case SLOW_DOWN:
+                    return SkillsHelper.getInstance().getSlowDownLevel() == 1;
                 case FREEZE:
                     return SkillsHelper.getInstance().getFreezeBallLevel() == 1;
                 case SPEED_UP:
-                    return false;
+                    return SkillsHelper.getInstance().getSpeedUpLevel() == 1;
                 case ADD_BALL:
                     return false;
                 default:
@@ -166,6 +164,14 @@ public class PowerUp extends Sprite {
         public int getProbability() {
             switch (this) {
                 case STEEL_BALL:
+                    return 10;
+                case FREEZE:
+                    return 10;
+                case SPEED_UP:
+                    return 10;
+                case SLOW_DOWN:
+                    return 10;
+                case MAGNET:
                     return 10;
                 default:
                     return 10;

@@ -30,6 +30,8 @@ public class Ball extends Sprite {
     private boolean isActive = false;
     private float absSpeed;
 
+    public float nonActiveBallXDiff = 0;
+
     public Ball(World world, float x, float y) {
         this(world, new Vector2(x, y));
     }
@@ -129,10 +131,10 @@ public class Ball extends Sprite {
 
     public void setIsActive(boolean isActive) {
         if (!this.isActive && isActive) {
-            this.isActive = isActive;
             b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X, DEFAULT_VELOCITY_y), b2body.getWorldCenter(), true);
             absSpeed = calcAbsSpeed();
         }
+        this.isActive = isActive;
     }
 
     public boolean isActive() {

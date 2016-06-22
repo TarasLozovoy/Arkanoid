@@ -224,7 +224,7 @@ public class GameScreen implements DefaultScreen {
             platform.updatePosition(touchPosition.x);
             for (Ball ball : balls) {
                 if (!ball.isActive()) {
-                    ball.b2body.setTransform(touchPosition.x, ball.b2body.getPosition().y, ball.b2body.getAngle());
+                    ball.b2body.setTransform(touchPosition.x + ball.nonActiveBallXDiff, ball.b2body.getPosition().y, ball.b2body.getAngle());
                 }
             }
             touchPerformed = true;
@@ -343,14 +343,14 @@ public class GameScreen implements DefaultScreen {
 
     private boolean handleNewPowerUp(PowerUp.Type type) {
         switch (type) {
-            case SLOW:
+            case SLOW_DOWN:
                 for (Ball ball : balls) {
-                    ball.changeSpeed(0.9f);
+                    ball.changeSpeed(SkillsHelper.getInstance().getSLowDownRatio());
                 }
                 return true;
             case SPEED_UP:
                 for (Ball ball : balls) {
-                    ball.changeSpeed(1.1f);
+                    ball.changeSpeed(SkillsHelper.getInstance().getSpeedUpRatio());
                 }
                 return true;
             case ADD_BALL:

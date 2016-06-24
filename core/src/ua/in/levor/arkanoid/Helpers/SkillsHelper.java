@@ -83,6 +83,32 @@ public class SkillsHelper {
     private int magnetDurationLevel;
     private static int MAGNET_DURATION_MULTIPLIER = 1;
 
+    private int magnetAttractionLevel;
+    private static float MAGNET_ATTRACTION_MULTIPLIER = 30f / 100; //25 per sec per level
+
+    //+ ball
+    private int duplicateBallLevel;
+
+    private int tripleBallProbabilityLevel;
+    private static float TRIPLE_BALL_PROBABILITY_MULTIPLIER = 1.5f / 100;
+
+    private int quadripleBallProbabilityLevel;
+    private static float QUADRIPLE_BALL_PROBABILITY_MULTIPLIER = 2.5f / 100;
+
+    //bomb
+    private int bombLevel;
+
+    private int bombDurationLevel;
+    private static int BOMB_DURATION_MULTIPLIER = 1;
+
+    private int bombRadiusLevel;                                            //max = 20
+    private static int BOMB_RADIUS_MULTIPLIER = 2;
+
+    private int bombWallDestroyLevel;
+
+    private int bombShrapnelLevel;                                          //max = 20
+    private static float BOMB_SHRAPNEL_MULTIPLIER = 1.5f / 100;
+
     public void init(){
         // TODO: 6/3/16 init from DB
         goldFromBrickHitLevel = 0;
@@ -118,6 +144,19 @@ public class SkillsHelper {
         //magnet
         magnetLevel = 1;
         magnetDurationLevel = 20;
+        magnetAttractionLevel = 20;
+
+        //+ ball
+        duplicateBallLevel = 1;
+        tripleBallProbabilityLevel = 20;
+        quadripleBallProbabilityLevel = 20;
+
+        //bomb
+        bombLevel = 0;
+        bombDurationLevel = 0;
+        bombRadiusLevel = 0;
+        bombWallDestroyLevel = 0;
+        bombShrapnelLevel = 0;
     }
 
     public float getGoldFromBrickHitChance() {
@@ -219,5 +258,43 @@ public class SkillsHelper {
 
     public int getMagnetDuration() {
         return 10 + magnetDurationLevel * MAGNET_DURATION_MULTIPLIER;
+    }
+
+    public float getMagnetAttractionPower() {
+        return magnetAttractionLevel * MAGNET_ATTRACTION_MULTIPLIER;
+    }
+
+    //+ ball
+    public int getDuplicateBallLevel() {
+        return duplicateBallLevel;
+    }
+
+    public float getTripleBallChance() {
+        return tripleBallProbabilityLevel * TRIPLE_BALL_PROBABILITY_MULTIPLIER;
+    }
+
+    public float getQuadripleBallChance() {
+        return getTripleBallChance() * quadripleBallProbabilityLevel * QUADRIPLE_BALL_PROBABILITY_MULTIPLIER;
+    }
+
+    //bomb
+    public int getBombLevel() {
+        return bombLevel;
+    }
+
+    public int getBombDuration() {
+        return 10 + bombDurationLevel * BOMB_DURATION_MULTIPLIER;
+    }
+
+    public float getBombRadius() {
+        return 40 + bombRadiusLevel * BOMB_RADIUS_MULTIPLIER;
+    }
+
+    public boolean isBombDestroysWall() {
+        return bombWallDestroyLevel == 1;
+    }
+
+    public float getBombShrapnelChance() {
+        return bombShrapnelLevel * BOMB_SHRAPNEL_MULTIPLIER;
     }
 }

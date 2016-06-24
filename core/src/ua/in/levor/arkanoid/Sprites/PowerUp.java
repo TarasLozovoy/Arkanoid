@@ -20,7 +20,6 @@ import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 
 public class PowerUp extends Sprite {
     public static final int WIDTH = 24;
-    public static final int BOMB_BURST_RADIUS = 40;
 
     private World world;
     public Body b2body;
@@ -128,6 +127,7 @@ public class PowerUp extends Sprite {
                 case STEEL_BALL:
                     return SkillsHelper.getInstance().getSteelBallDuration();
                 case BOMB:
+                    return SkillsHelper.getInstance().getBombDuration();
                 case FIRE_BALL:
                 case MAGNET:
                     return SkillsHelper.getInstance().getMagnetDuration();
@@ -143,7 +143,7 @@ public class PowerUp extends Sprite {
                 case STEEL_BALL:
                     return SkillsHelper.getInstance().getSteelBallLevel() == 1;
                 case BOMB:
-                    return false;
+                    return SkillsHelper.getInstance().getBombLevel() == 1;
                 case FIRE_BALL:
                     return false;
                 case MAGNET:
@@ -155,7 +155,7 @@ public class PowerUp extends Sprite {
                 case SPEED_UP:
                     return SkillsHelper.getInstance().getSpeedUpLevel() == 1;
                 case ADD_BALL:
-                    return false;
+                    return SkillsHelper.getInstance().getDuplicateBallLevel() == 1;
                 default:
                     throw new RuntimeException("Unsupported type");
             }
@@ -172,6 +172,10 @@ public class PowerUp extends Sprite {
                 case SLOW_DOWN:
                     return 10;
                 case MAGNET:
+                    return 10;
+                case ADD_BALL:
+                    return 10;
+                case BOMB:
                     return 10;
                 default:
                     return 10;

@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.Random;
+
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.DB.DBHelper;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
@@ -164,8 +166,13 @@ public class GameScreen implements DefaultScreen {
         if (balls.size > 0) {
             Array<Ball> newBalls = new Array<Ball>();
             for (Ball ball : balls) {
-                Ball newBall = ball.cloneBall();
-                newBalls.add(newBall);
+                newBalls.add(ball.cloneBall());
+                if (new Random().nextFloat() < SkillsHelper.getInstance().getTripleBallChance()) {
+                    newBalls.add(ball.cloneBall());
+                }
+                if (new Random().nextFloat() < SkillsHelper.getInstance().getQuadripleBallChance()) {
+                    newBalls.add(ball.cloneBall());
+                }
             }
             balls.addAll(newBalls);
         } else {
@@ -226,6 +233,8 @@ public class GameScreen implements DefaultScreen {
                 if (!ball.isActive()) {
                     ball.b2body.setTransform(touchPosition.x + ball.nonActiveBallXDiff, ball.b2body.getPosition().y, ball.b2body.getAngle());
                 }
+                ball.checkMagnetAttraction(new Vector2(platform.b2body.getPosition().x + platform.getWidth() / 2,
+                        platform.b2body.getPosition().y + platform.getHeight() / 2), dt);
             }
             touchPerformed = true;
         } else if (touchPerformed) {

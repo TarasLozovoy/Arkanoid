@@ -15,12 +15,13 @@ import java.util.Random;
 
 import ua.in.levor.arkanoid.Arkanoid;
 import ua.in.levor.arkanoid.Helpers.AssetsHelper;
+import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 
 public class Ball extends Sprite {
     public static final int DIAMETER = 18;
     public static final int RADIUS = DIAMETER / 2;
-    public static final float DEFAULT_VELOCITY_X = 0.5f;
-    public static final float DEFAULT_VELOCITY_y = 2.5f;
+    public static final float DEFAULT_VELOCITY_X = 0f;
+    public static final float DEFAULT_VELOCITY_y = 3f;
 
     public World world;
     public Body b2body;
@@ -92,16 +93,6 @@ public class Ball extends Sprite {
         float velocityX = Math.abs(b2body.getLinearVelocity().x);
         float velocityY = Math.abs(b2body.getLinearVelocity().y);
 
-        if (Math.abs(velocityY/(velocityX + velocityY)) < 0.15) {
-            float difX = velocityX * 0.01f;
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x + (b2body.getLinearVelocity().x > 0 ? -difX : difX),
-                    b2body.getLinearVelocity().y + (b2body.getLinearVelocity().y > 0 ? difX : -difX) * 1.15f);
-            System.out.println("Low Y speed! x: " + velocityX + "y: " + velocityY);
-        } else if (Math.abs(velocityX) < 0.5) {
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.1f,
-                    b2body.getLinearVelocity().y);
-        }
-
         //normalizing speed
         if (calcAbsSpeed() < absSpeed * 0.97) {
             b2body.setLinearVelocity(b2body.getLinearVelocity().x * 1.02f, b2body.getLinearVelocity().y * 1.02f);
@@ -113,10 +104,14 @@ public class Ball extends Sprite {
                     + " current: " + calcAbsSpeed() + " needed: " + absSpeed);
         }
 
-        if (Math.abs(b2body.getLinearVelocity().x) < 0.1f) {
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x > 0 ? 0.1f : - 0/1f, b2body.getLinearVelocity().y);
-        } else if (Math.abs(b2body.getLinearVelocity().y) < 0.1f) {
-            b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y > 0 ? 0.1f : - 0/1f);
+        if (powerUpType != PowerUp.Type.MAGNET) {
+            if (Math.abs(b2body.getLinearVelocity().x) < 0.1f) {
+                b2body.setLinearVelocity(b2body.getLinearVelocity().x > 0 ? 0.1f : -0 / 1f, b2body.getLinearVelocity().y);
+                System.out.println("Low X speed! x: " + velocityX + "y: " + velocityY);
+            } else if (Math.abs(b2body.getLinearVelocity().y) < 0.1f) {
+                b2body.setLinearVelocity(b2body.getLinearVelocity().x, b2body.getLinearVelocity().y > 0 ? 0.1f : -0 / 1f);
+                System.out.println("Low Y speed! x: " + velocityX + "y: " + velocityY);
+            }
         }
 
         setPosition(x, y);
@@ -131,7 +126,8 @@ public class Ball extends Sprite {
 
     public void setIsActive(boolean isActive) {
         if (!this.isActive && isActive) {
-            b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X, DEFAULT_VELOCITY_y), b2body.getWorldCenter(), true);
+            float rand = new Random().nextFloat() - 0.5f;
+            b2body.applyLinearImpulse(new Vector2(DEFAULT_VELOCITY_X + rand, DEFAULT_VELOCITY_y - rand), b2body.getWorldCenter(), true);
             absSpeed = calcAbsSpeed();
         }
         this.isActive = isActive;
@@ -178,5 +174,30 @@ public class Ball extends Sprite {
 
     public void hide() {
         setAlpha(0f);
+    }
+
+    public void checkMagnetAttraction(Vector2 platformPosition, float dt) {
+        if (powerUpType == PowerUp.Type.MAGNET && isActive) {
+            float attractionPower = SkillsHelper.getInstance().getMagnetAttractionPower() * dt;
+            float velocityX = b2body.getLinearVelocity().x;
+            float velocityY = b2body.getLinearVelocity().y;
+
+            System.out.println("X: " + velocityX + " Y: " + velocityY);
+            if (b2body.getPosition().y > platformPosition.y) {
+                velocityY -= attractionPower;
+            } else {
+                velocityY += attractionPower;
+            }
+
+            if (b2body.getPosition().x > platformPosition.x) {
+                velocityX -= attractionPower;
+            } else {
+                velocityX += attractionPower;
+            }
+
+            System.out.println("X: " + velocityX + " Y: " + velocityY);
+            System.out.println("+++++++++");
+            b2body.setLinearVelocity(velocityX, velocityY);
+        }
     }
 }

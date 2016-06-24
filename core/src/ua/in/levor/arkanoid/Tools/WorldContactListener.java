@@ -41,11 +41,15 @@ public class WorldContactListener implements ContactListener {
 
                 boolean wallHit = brick.getType() == Brick.Type.HALF_WALL && intersection.y < brick.getBody().getPosition().y
                         || brick.getType() == Brick.Type.WALL;
-                if (wallHit && ballObj.getPowerUpType() != PowerUp.Type.FREEZE) return;
+                boolean bombDestroysWall = ballObj.getPowerUpType() == PowerUp.Type.BOMB && SkillsHelper.getInstance().isBombDestroysWall();
+                if (!bombDestroysWall && wallHit && ballObj.getPowerUpType() != PowerUp.Type.FREEZE) return;
 
                 if (ballObj.getPowerUpType() == PowerUp.Type.BOMB) {
-                    for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(PowerUp.BOMB_BURST_RADIUS, intersection)) {
+                    for (Brick b : BrickHelper.getInstance().getAllBricksInRadius(SkillsHelper.getInstance().getBombRadius(), intersection)) {
                         b.handleHit();
+                        if (random.nextFloat() < SkillsHelper.getInstance().getBombShrapnelChance() && !b.isReadyToDestroy()) {
+                            b.handleHit();
+                        }
                     }
                 } else if (ballObj.getPowerUpType() == PowerUp.Type.STEEL_BALL) {
                     brick.handleHit();

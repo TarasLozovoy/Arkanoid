@@ -15,7 +15,7 @@ import ua.in.levor.arkanoid.Helpers.SkillsHelper;
 import ua.in.levor.arkanoid.Screens.DefaultScreen;
 import ua.in.levor.arkanoid.Screens.MenuScreen;
 
-public class Arkanoid extends Game {
+public abstract class Arkanoid extends Game {
 	public static final int WIDTH = 480;
 	public static final int STATUSBAR_HEIGHT = 50;
 	public static final int HEIGHT = 800 - STATUSBAR_HEIGHT;
@@ -96,7 +96,10 @@ public class Arkanoid extends Game {
 	}
 
 	public static Button adjustSize(Button buttonToBeScaled) {
-		buttonToBeScaled.setSize(scale(buttonToBeScaled.getWidth()), scale(buttonToBeScaled.getHeight()));;
+		buttonToBeScaled.setSize(scale(buttonToBeScaled.getWidth()), scale(buttonToBeScaled.getHeight()));
 		return buttonToBeScaled;
 	}
+
+	//abstract methods
+	public abstract void showMessageDialog(String message);
 }

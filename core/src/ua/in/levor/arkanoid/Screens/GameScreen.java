@@ -244,7 +244,7 @@ public class GameScreen implements DefaultScreen {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            game.setScreen(new MenuScreen(game));
+            setState(GameState.PAUSED);
         }
     }
 

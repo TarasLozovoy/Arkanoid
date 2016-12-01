@@ -1,0 +1,47 @@
+bricks.png
+size: 144, 24
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+11
+  rotate: false
+  xy: 0, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+22
+  rotate: false
+  xy: 24, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+33
+  rotate: false
+  xy: 48, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+44
+  rotate: false
+  xy: 72, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+55
+  rotate: false
+  xy: 96, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+power
+  rotate: false
+  xy: 120, 0
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1

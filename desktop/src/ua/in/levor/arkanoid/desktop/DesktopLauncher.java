@@ -10,6 +10,6 @@ public class DesktopLauncher {
 		config.width = Arkanoid.WIDTH;
 		config.height = Arkanoid.HEIGHT;
 		config.title = Arkanoid.TITLE;
-		new LwjglApplication(new Arkanoid(), config);
+		new LwjglApplication(new DesktopGame(), config);
 	}
 }

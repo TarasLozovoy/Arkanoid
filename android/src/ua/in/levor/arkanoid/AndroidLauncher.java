@@ -16,7 +16,7 @@ public class AndroidLauncher extends AndroidApplication {
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useAccelerometer = false;
 		config.useCompass = false;
-		initialize(new Arkanoid(), config);
+		initialize(new AndroidGame(this), config);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			hideVirtualButtons();
